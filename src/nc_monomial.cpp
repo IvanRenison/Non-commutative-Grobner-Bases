@@ -54,11 +54,17 @@ struct Monomial {
     return is;
   }
 
-  void nice_print(ostream& os = cout) {
+  void nice_print(ostream& os = cout) const {
     for (size_t i = 0; i < vals.size(); i++) {
       assert(vals[i] < 26);
       os << (char)('a' + vals[i]);
     }
+  }
+};
+
+struct LexOrd {
+  bool operator()(const Monomial& a, const Monomial& b) const {
+    return a.vals < b.vals;
   }
 };
 
