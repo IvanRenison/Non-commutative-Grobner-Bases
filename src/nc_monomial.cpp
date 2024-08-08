@@ -23,7 +23,7 @@ struct Monomial {
   }
   bool divides(const Monomial& m) const {
     if (vals.size() > m.vals.size()) return false;
-    for (size_t i = 0; i + vals.size() < m.vals.size(); i++) {
+    for (size_t i = 0; i + vals.size() <= m.vals.size(); i++) {
       bool ok = true;
       for (size_t j = 0; j < vals.size(); j++) {
         if (vals[j] != m.vals[i + j]) {

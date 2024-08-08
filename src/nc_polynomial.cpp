@@ -18,7 +18,7 @@ struct Poly {
 
   Poly operator+(const Poly& p) const {
     Poly res = *this;
-    for (auto& [m, c] : p.terms) {
+    for (const auto& [m, c] : p.terms) {
       res.terms[m] += c;
       if (res.terms[m] == K(0)) res.terms.erase(m);
     }
@@ -26,7 +26,7 @@ struct Poly {
   }
   Poly operator-(const Poly& p) const {
     Poly res = *this;
-    for (auto& [m, c] : p.terms) {
+    for (const auto& [m, c] : p.terms) {
       res.terms[m] -= c;
       if (res.terms[m] == K(0)) res.terms.erase(m);
     }
@@ -34,8 +34,8 @@ struct Poly {
   }
   Poly operator*(const Poly& p) const {
     Poly res;
-    for (auto& [m1, c1] : terms) {
-      for (auto& [m2, c2] : p.terms) {
+    for (const auto& [m1, c1] : terms) {
+      for (const auto& [m2, c2] : p.terms) {
         res.terms[m1 * m2] += c1 * c2;
       }
     }
@@ -48,6 +48,13 @@ struct Poly {
     }
     return res;
   }
+  Poly operator*(Monomial m) const {
+    Poly res;
+    for (const auto& [m_, d] : terms) {
+      res.terms[m_ * m] = d;
+    }
+    return res;
+  }
   Poly operator*(K c) const {
     Poly res = *this;
     for (auto& [m, d] : res.terms) {
@@ -57,7 +64,7 @@ struct Poly {
   }
   Poly operator-() const {
     Poly res;
-    for (auto& [m, c] : terms) {
+    for (const auto& [m, c] : terms) {
       res.terms[m] = -c;
     }
     return res;
@@ -79,6 +86,9 @@ struct Poly {
   }
   Poly operator*=(const Poly& p) {
     return *this = *this * p;
+  }
+  Poly operator*=(Monomial m) {
+    return *this = *this * m;
   }
   Poly operator*=(K c) {
     for (auto& [m, d] : terms) {
@@ -106,6 +116,10 @@ struct Poly {
   }
   bool monic() const {
     return lc() == K(1);
+  }
+
+  K operator[](const Monomial& m) {
+    return terms[m];
   }
 
   friend ostream& operator<<(ostream& os, const Poly& p) {
@@ -140,3 +154,12 @@ struct Poly {
     os << '\n';
   }
 };
+
+template<typename K, class ord = LexOrd>
+Poly<K, ord> operator*(Monomial m, const Poly<K, ord>& p) {
+  Poly<K, ord> res;
+  for (const auto& [m_, d] : p.terms) {
+    res.terms[m * m_] = d;
+  }
+  return res;
+}
