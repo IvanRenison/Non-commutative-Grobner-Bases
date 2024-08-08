@@ -56,6 +56,9 @@ struct Poly {
     return res;
   }
   Poly operator*(K c) const {
+    if (c == K(0)) {
+      return Poly();
+    }
     Poly res = *this;
     for (auto& [m, d] : res.terms) {
       d *= c;
