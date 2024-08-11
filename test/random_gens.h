@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "../src/nc_polynomial.cpp"
-#include "../extras/Rational.cpp"
+#include "../src/nc_polynomial.h"
+#include "../extras/Rational.h"
 
 typedef Monomial::X X;
 

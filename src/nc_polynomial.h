@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "nc_monomial.cpp"
+#include "nc_monomial.h"
 
 template<typename K, class ord = LexOrd>
 struct Poly {

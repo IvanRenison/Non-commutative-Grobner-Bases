@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "../src/nc_monomial.cpp"
+#include "../src/nc_monomial.h"
 #include "random_gens.h"
 
 typedef Monomial::X X;
