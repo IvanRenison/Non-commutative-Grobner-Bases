@@ -150,11 +150,24 @@ struct Poly {
         os << " + ";
       }
       if (it->second != K(1)) {
-        os << it->second;
+        os << it->second << ' ';
       }
       it->first.nice_print(os);
     }
     os << '\n';
+  }
+  static Poly nice_read(istream& is = cin) {
+    Poly res;
+    while (true) {
+      K c;
+      is >> c;
+      Monomial m = Monomial::nice_read(is);
+      res.terms[m] = c;
+      while (is.peek() == ' ') is.ignore();
+      if (is.peek() != '+') break;
+      is.ignore();
+    }
+    return res;
   }
 };
 

@@ -35,6 +35,24 @@ struct Monomial {
     }
     return false;
   }
+  optional<pair<Monomial, Monomial>> divide(const Monomial& m) const {
+    if (vals.size() > m.vals.size()) return {};
+    for (size_t i = 0; i + vals.size() <= m.vals.size(); i++) {
+      bool ok = true;
+      for (size_t j = 0; j < vals.size(); j++) {
+        if (vals[j] != m.vals[i + j]) {
+          ok = false;
+          break;
+        }
+      }
+      if (ok) {
+        Monomial a(vector(m.vals.begin(), m.vals.begin() + i));
+        Monomial b(vector(m.vals.begin() + i + vals.size(), m.vals.end()));
+        return {{a, b}};
+      }
+    }
+    return {};
+  }
   size_t size() const { return vals.size(); }
 
   friend ostream& operator<<(ostream& os, const Monomial& m) {
@@ -60,6 +78,15 @@ struct Monomial {
       os << (char)('a' + vals[i]);
     }
   }
+  static Monomial nice_read(istream& is = cin) {
+    string s;
+    is >> s;
+    Monomial m;
+    for (char c : s) {
+      m.vals.push_back(c - 'a');
+    }
+    return m;
+  }
 };
 
 struct LexOrd {
@@ -68,3 +95,9 @@ struct LexOrd {
   }
 };
 
+struct DegLexOrd {
+  bool operator()(const Monomial& a, const Monomial& b) const {
+    size_t n = a.vals.size(), m = b.vals.size();
+    return n < m || (n == m && a.vals < b.vals);
+  }
+};

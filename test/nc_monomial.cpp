@@ -15,18 +15,22 @@ void test_prod_and_divide() {
   assert(m0.divides(prod));
   assert(m1.divides(prod));
 
-  m0 *= m1;
+  Monomial m00 = m0;
+  m00 *= m1;
 
-  assert(prod == m0);
+  assert(prod == m00);
 
   prod *= m2;
 
   assert(m1.divides(prod));
   assert(m2.divides(prod));
 
-  m0 *= m2;
+  m00 *= m2;
 
-  assert(prod == m0);
+  assert(prod == m00);
+
+  optional<pair<Monomial, Monomial>> div = m1.divide(prod);
+  assert(div.has_value());
 }
 
 void test_IO() {
