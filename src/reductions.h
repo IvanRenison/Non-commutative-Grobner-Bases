@@ -44,3 +44,23 @@ reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
 
   return f;
 }
+
+template<typename K, class ord = LexOrd>
+Poly<K, ord>
+reduce(Poly<K, ord> f, const vector<Poly<K, ord>>& G) {
+  while (true) {
+    bool red = false;
+    for (const auto& g : G) {
+      Poly<K, ord> f_ = reduce(f, g);
+      if (f != f_) {
+        f = f_;
+        red = true;
+        break;
+      }
+    }
+    if (!red) {
+      break;
+    }
+  }
+  return f;
+}
