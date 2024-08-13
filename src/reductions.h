@@ -20,6 +20,10 @@ reduce(Poly<K, ord>& f, const Poly<K, ord>& g, const Monomial& a, const Monomial
 template<typename K, class ord = LexOrd>
 Poly<K, ord>
 reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
+  if (f.isZero()) {
+    return f;
+  }
+
   Monomial gm = g.lm();
   K gc = g.lc();
 

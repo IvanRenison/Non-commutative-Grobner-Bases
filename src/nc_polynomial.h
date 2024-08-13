@@ -65,6 +65,16 @@ struct Poly {
     }
     return res;
   }
+  Poly operator/(K c) const {
+    if (c == K(0)) {
+      return Poly();
+    }
+    Poly res = *this;
+    for (auto& [m, d] : res.terms) {
+      d /= c;
+    }
+    return res;
+  }
   Poly operator-() const {
     Poly res;
     for (const auto& [m, c] : terms) {
@@ -119,6 +129,9 @@ struct Poly {
   }
   bool monic() const {
     return lc() == K(1);
+  }
+  bool isZero() const {
+    return terms.empty();
   }
 
   K operator[](const Monomial& m) {
