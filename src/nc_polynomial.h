@@ -9,7 +9,7 @@ struct Poly {
   map<Monomial, K, ord> terms;
 
   Poly() {}
-  Poly(const Monomial& m, K c = 1) { terms[m] = c; }
+  Poly(const Monomial& m, K c = K(1)) { terms[m] = c; }
   Poly(const map<Monomial, K, ord>& p) : terms(p) {}
 
   bool operator==(const Poly& p) const {
@@ -86,14 +86,14 @@ struct Poly {
   Poly operator+=(const Poly& p) {
     for (auto& [m, c] : p.terms) {
       terms[m] += c;
-      if (terms[m] == 0) terms.erase(m);
+      if (terms[m] == K(0)) terms.erase(m);
     }
     return *this;
   }
   Poly operator-=(const Poly& p) {
     for (auto& [m, c] : p.terms) {
       terms[m] -= c;
-      if (terms[m] == 0) terms.erase(m);
+      if (terms[m] == K(0)) terms.erase(m);
     }
     return *this;
   }
@@ -152,7 +152,7 @@ struct Poly {
       Monomial mon;
       K c;
       is >> c >> mon;
-      p.terms[mon] = c;
+      p.terms[mon] += c;
     }
     return is;
   }

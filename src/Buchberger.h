@@ -131,7 +131,7 @@ template<typename K, class ord = LexOrd>
 IdealMembershipStatus inIdeal(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
   BuchbergerIncremental bi(G);
 
-  for (size_t i = 0; i <= max_sz; i++) {
+  for (size_t i = 0; i < max_sz; i++) {
     optional<Poly<K, ord>> p = bi.next();
     if (!p.has_value()) {
       return NotInIdeal;

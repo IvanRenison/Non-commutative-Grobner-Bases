@@ -37,8 +37,6 @@ void test_operations() {
 void test_IO() {
   P m0 = random_poly();
 
-  string s;
-
   stringstream ss;
   ss << m0;
 

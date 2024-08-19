@@ -18,3 +18,21 @@ jobs:
     - name: Run test
       run:
         bash ./test/run_all.sh
+
+  test_external:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        python3 -m pip install pyahocorasick
+        sudo apt install sagemath
+        python3 -m pip install git+https://github.com/ClemensHofstadler/operator_gb.git
+    - name: Run test
+      run: |
+        cd ./test_external
+        g++ -std=c++23 -O2 Buchberger_main.cpp -o Buchberger_main.run
+        python3 run.py

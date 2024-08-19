@@ -1,11 +1,12 @@
 #pragma once
 
 #include <bits/stdc++.h>
+#include "BigInteger.h"
 
 using namespace std;
 
 // In case of overflow of __int128_t in fractions
-#pragma GCC optimize("trapv")
+//#pragma GCC optimize("trapv")
 
 istream& operator>>(istream& is, __uint128_t& value) {
   unsigned long long x;
@@ -44,32 +45,43 @@ ostream& operator<<(ostream& os, __int128_t value) {
 
 
 
-typedef __int128_t ll;
-typedef __uint128_t ull;
+InfInt abs(InfInt x) {
+  return x >= 0 ? x : -x;
+}
 
-template <typename T> ll signum(T val) {
+InfInt my_gcd(InfInt a, InfInt b) {
+  while (b != 0) {
+    a = a % b;
+    swap(a, b);
+  }
+  return a;
+}
+
+template <typename T> InfInt signum(T val) {
   return (T(0) < val) - (val < T(0));
 }
 
-#define abs(x) ((x) >= 0 ? (x) : (-x))
+//#define abs(x) ((x) >= 0 ? (x) : (-x))
 
 struct Ratio {
-  ll num;
-  ull den;
-  Ratio(ll num = 0, ull den = 1) {
-    ull g = __gcd((ull)abs(num), den);
-    this->num = num / ((ll)g);
+  InfInt num;
+  InfInt den;
+  Ratio(InfInt num = 0, InfInt den = 1) {
+    static int i = 0;
+    i++;
+    InfInt g = my_gcd(abs(num), den);
+    this->num = num / (g);
     this->den = den / g;
   }
 
   Ratio operator+(Ratio o) const {
-    ull new_den = den * o.den;
-    ll new_num = num * (ll)o.den + o.num * (ll)den;
+    InfInt new_den = den * o.den;
+    InfInt new_num = num * o.den + o.num * den;
     return Ratio(new_num, new_den);
   }
   Ratio operator-(Ratio o) const {
-    ull new_den = den * o.den;
-    ll new_num = num * (ll)o.den - o.num * (ll)den;
+    InfInt new_den = den * o.den;
+    InfInt new_num = num * o.den - o.num * den;
     return Ratio(new_num, new_den);
   }
   Ratio operator-() const {
@@ -80,7 +92,7 @@ struct Ratio {
   }
   Ratio operator/(Ratio o) const {
     assert(o.num != 0);
-    return Ratio(num * (ll)o.den * signum(o), den * (ull)abs(o.num));
+    return Ratio(num * o.den * signum(o), den * (InfInt)abs(o.num));
   }
 
   void operator+=(Ratio o) {
@@ -103,7 +115,7 @@ struct Ratio {
     return !(*this == o);
   }
   bool operator<(Ratio o) const {
-    return num * (ll)o.den < o.num * (ll)den;
+    return num * o.den < o.num * den;
   }
   bool operator<=(Ratio o) const {
     return *this < o || *this == o;
