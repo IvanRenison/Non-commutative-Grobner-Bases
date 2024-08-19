@@ -21,42 +21,50 @@ struct Monomial {
     vals.insert(vals.end(), m.vals.begin(), m.vals.end());
     return *this;
   }
-  bool divides(const Monomial& m) const {
-    if (vals.size() > m.vals.size()) return false;
-    for (size_t i = 0; i + vals.size() <= m.vals.size(); i++) {
-      bool ok = true;
-      for (size_t j = 0; j < vals.size(); j++) {
-        if (vals[j] != m.vals[i + j]) {
-          ok = false;
-          break;
-        }
+  size_t size() const { return vals.size(); }
+  // Returns the position of m.vals where this monomial divides m, or `numeric_limits<size_t>::max()` if it doesn't
+  size_t divide_index(const Monomial& m) const {
+    if (size() == 0) return 0;
+    if (size() > m.size()) return numeric_limits<size_t>::max();
+
+    size_t n = size() + m.size();
+
+    auto S = [&](size_t i) -> X {
+      return i < size() ? vals[i] : m.vals[i - size()];
+    };
+
+    // Using Z function idea
+    vector<size_t> z(n);
+    int l = -1, r = -1;
+    for (size_t i = 1; i < n; i++) {
+      z[i] = (int)i >= r ? 0 : min((size_t)r - i, z[i - l]);
+      while (i + z[i] < n && S(i + z[i]) == S(z[i])) {
+        z[i]++;
       }
-      if (ok) return true;
+      if ((int)(i + z[i]) > r) {
+        l = i, r = i + z[i];
+      }
+
+      if (i >= size() && z[i] >= size()) {
+        return i - size();
+      }
     }
-    return false;
+
+    return numeric_limits<size_t>::max();
+  }
+  bool divides(const Monomial& m) const {
+    return divide_index(m) < numeric_limits<size_t>::max();
   }
   optional<pair<Monomial, Monomial>> divide(const Monomial& m) const {
-    if (vals.size() > m.vals.size()) return {};
-    for (size_t i = 0; i + vals.size() <= m.vals.size(); i++) {
-      bool ok = true;
-      for (size_t j = 0; j < vals.size(); j++) {
-        if (vals[j] != m.vals[i + j]) {
-          ok = false;
-          break;
-        }
-      }
-      if (ok) {
-        Monomial a(vector(m.vals.begin(), m.vals.begin() + i));
-        Monomial b(vector(m.vals.begin() + i + vals.size(), m.vals.end()));
-        return {{a, b}};
-      }
-    }
-    return {};
+    size_t i = divide_index(m);
+    if (i == numeric_limits<size_t>::max()) return {};
+    Monomial a(vector(m.vals.begin(), m.vals.begin() + i));
+    Monomial b(vector(m.vals.begin() + i + size(), m.vals.end()));
+    return {{a, b}};
   }
-  size_t size() const { return vals.size(); }
 
   friend ostream& operator<<(ostream& os, const Monomial& m) {
-    os << m.vals.size();
+    os << m.size();
     for (auto x : m.vals) {
       os << ' ' << x;
     }
