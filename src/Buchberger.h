@@ -11,38 +11,6 @@ Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g
 }
 
 template<typename K, class ord = DegLexOrd>
-pair<vector<Poly<K, ord>>, bool> Buchberger(vector<Poly<K, ord>> G, size_t max_iter = 100) {
-
-  queue<tuple<Amb, size_t, size_t>> ambs;
-  for (size_t j = 0; j < G.size(); j++) {
-    for (size_t i = 0; i <= j; i++) {
-      for (const auto& amb : ambiguities(G[i].lm(), G[j].lm())) {
-        ambs.push({amb, i, j});
-      }
-    }
-  }
-
-  for (; !ambs.empty() && max_iter > 0; max_iter--) {
-    auto [amb, i, j] = ambs.front();
-    ambs.pop();
-
-    Poly<K, ord> s = S_poly(amb, G[i], G[j]);
-    s = reduce(s, G);
-
-    if (!s.isZero()) {
-      G.push_back(s);
-      for (size_t k = 0; k < G.size() - 1; k++) {
-        for (const auto& amb : ambiguities(G[k].lm(), s.lm())) {
-          ambs.push({amb, k, G.size() - 1});
-        }
-      }
-    }
-  }
-
-  return {G, max_iter == 0};
-}
-
-template<typename K, class ord = DegLexOrd>
 struct BuchbergerIncremental {
   vector<Poly<K, ord>> G;
   queue<tuple<Amb, size_t, size_t>> ambs;
