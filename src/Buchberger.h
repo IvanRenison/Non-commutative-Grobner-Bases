@@ -5,12 +5,12 @@ using namespace std;
 #include "ambiguities.h"
 #include "reductions.h"
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
   return (amb.a * f * amb.b) / f.lc() - (amb.c * g * amb.d) / g.lc();
 }
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 pair<vector<Poly<K, ord>>, bool> Buchberger(vector<Poly<K, ord>> G, size_t max_iter = 100) {
 
   queue<tuple<Amb, size_t, size_t>> ambs;
@@ -42,7 +42,7 @@ pair<vector<Poly<K, ord>>, bool> Buchberger(vector<Poly<K, ord>> G, size_t max_i
   return {G, max_iter == 0};
 }
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 struct BuchbergerIncremental {
   vector<Poly<K, ord>> G;
   queue<tuple<Amb, size_t, size_t>> ambs;
@@ -93,7 +93,7 @@ enum IdealMembershipStatus {
   Unknown
 };
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 IdealMembershipStatus inIdeal(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
   BuchbergerIncremental bi(G);
 

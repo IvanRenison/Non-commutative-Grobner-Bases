@@ -4,7 +4,7 @@ using namespace std;
 
 #include "nc_monomial.h"
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 struct Poly {
   map<Monomial, K, ord> terms;
 
@@ -184,7 +184,7 @@ struct Poly {
   }
 };
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 Poly<K, ord> operator*(Monomial m, const Poly<K, ord>& p) {
   Poly<K, ord> res;
   for (const auto& [m_, d] : p.terms) {
@@ -193,7 +193,7 @@ Poly<K, ord> operator*(Monomial m, const Poly<K, ord>& p) {
   return res;
 }
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 struct PolyOrd {
   bool operator()(const Poly<K, ord>& p1, const Poly<K, ord>& p2) const {
     for (auto it1 = p1.terms.rbegin(), it2 = p2.terms.rbegin();

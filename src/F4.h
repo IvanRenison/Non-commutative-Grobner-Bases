@@ -6,7 +6,7 @@ using namespace std;
 #include "matrix.h"
 #include "reductions.h"
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const vector<Poly<K, ord>>& P) {
   vector<Poly<K, ord>> res;
 
@@ -46,7 +46,7 @@ vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const 
 }
 
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 pair<Matrix<K>, map<Monomial, size_t, ord>> toMatrix(const vector<Poly<K, ord>>& G) {
   set<Monomial, ord> T;
   for (const auto& f : G) {
@@ -74,7 +74,7 @@ pair<Matrix<K>, map<Monomial, size_t, ord>> toMatrix(const vector<Poly<K, ord>>&
   return {A, ids};
 }
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 vector<Poly<K, ord>> multiReduction(const vector<Poly<K, ord>>& G, const vector<Poly<K, ord>>& P) {
 /*   cerr << "multiReduction" << endl;
   cerr << "G:" << endl;
@@ -132,7 +132,7 @@ vector<Poly<K, ord>> multiReduction(const vector<Poly<K, ord>>& G, const vector<
 }
 
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 struct F4Incremental {
 
   vector<Poly<K, ord>> G;
@@ -215,7 +215,7 @@ enum IdealMembershipStatus {
   Unknown
 };
 
-template<typename K, class ord = LexOrd>
+template<typename K, class ord = DegLexOrd>
 IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
   F4Incremental bi(G);
 

@@ -5,7 +5,7 @@ using namespace std;
 #include "../extras/Rational.h"
 
 
-typedef Poly<Ratio, DegLexOrd> P;
+typedef Poly<Ratio> P;
 
 int main() {
 
