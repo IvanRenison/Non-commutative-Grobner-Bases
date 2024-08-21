@@ -76,20 +76,7 @@ pair<Matrix<K>, map<Monomial, size_t, ord>> toMatrix(const vector<Poly<K, ord>>&
 
 template<typename K, class ord = DegLexOrd>
 vector<Poly<K, ord>> multiReduction(const vector<Poly<K, ord>>& G, const vector<Poly<K, ord>>& P) {
-/*   cerr << "multiReduction" << endl;
-  cerr << "G:" << endl;
-  for (const auto& f : G) {
-    f.nice_print();
-  }
-  cerr << "P:" << endl;
-  for (const auto& f : P) {
-    f.nice_print();
-  } */
   vector<Poly<K, ord>> GG = symbolicPreprocessing(G, P);
-/*   cerr << "GG:" << endl;
-  for (const auto& f : GG) {
-    f.nice_print();
-  } */
 
   for (const auto& f : P) {
     GG.push_back(f);
@@ -123,8 +110,6 @@ vector<Poly<K, ord>> multiReduction(const vector<Poly<K, ord>>& G, const vector<
         }
       }
       res.push_back(f);
-/*       cerr << "Adding ";
-      f.nice_print(cerr); */
     }
   }
 
@@ -170,10 +155,9 @@ struct F4Incremental {
   vector<Poly<K, ord>> next() {
     while (true) {
       size_t n = G.size();
-      //cerr << "n = " << n << endl;
 
       vector<Poly<K, ord>> P;
-      for (size_t l = 0; l < 1 && k < ambs.size(); k++, l++) {
+      for (size_t l = 0; l < 5 && k < ambs.size(); k++, l++) {
         auto& [amb, i, j] = ambs[k];
         P.push_back(amb.a * G[i] * amb.b);
         P.push_back(amb.c * G[j] * amb.d);
@@ -220,7 +204,6 @@ IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, 
   F4Incremental bi(G);
 
   for (size_t i = 0; i < max_sz; i++) {
-    //cerr << "i = " << i << endl;
     vector<Poly<K, ord>> p = bi.next();
     if (p.empty()) {
       return NotInIdeal;

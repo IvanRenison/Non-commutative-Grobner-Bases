@@ -33,7 +33,7 @@ jobs:
         python3 -m pip install git+https://github.com/ClemensHofstadler/operator_gb.git
     - name: Run test
       run: |
-        cd ./test_external
+        cd ./test_InIdel
         g++ -std=c++23 -O2 Buchberger_main.cpp -o Buchberger_main.run
         g++ -std=c++23 -O2 F4_main.cpp -o F4_main.run
         python3 run.py
