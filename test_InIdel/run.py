@@ -127,3 +127,9 @@ def run_test():
 create_tests()
 run_test()
 
+runners = [
+  ("Buch_Zp", "./Buchberger_Zp_main.run", "buch_Zp_outIdeal.out"),
+  ("F4_Zp", "./F4_Zp_main.run", "F4_Zp_outIdeal.out"),
+]
+
+run_test()

@@ -16,6 +16,7 @@ void rref(Matrix<K>& A) {
 
   vector<bool> used(n, false);
 
+  // Gaussian elimination
   for (size_t c = 0; c < m; c++) {
     size_t r = 0;
     while (r < n && (used[r] || A[r][c] == K(0))) {
