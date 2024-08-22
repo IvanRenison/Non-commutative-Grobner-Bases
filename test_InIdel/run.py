@@ -74,9 +74,9 @@ def write_input(assumptions: list[PolyRep], claim: PolyRep, k : int, test: int):
 
 def run_program(index: int, test: int) -> tuple[float, str]: # Returns time and output
   _, runner, out_file = runners[index]
-  start_time = time.time()
+  start_time: float = time.time()
   os.system(f"{runner} < {in_out_folder}/{in_file}{test} > {in_out_folder}/{out_file}{test}")
-  end_time = time.time()
+  end_time: float = time.time()
   out: str = open(f"{in_out_folder}/{out_file}{test}", "r").read().strip()
   return end_time - start_time, out
 

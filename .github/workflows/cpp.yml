@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run test
       run:
-        bash ./test/run_all.sh
+        make test
 
   test_external:
 
@@ -32,10 +32,5 @@ jobs:
         sudo apt install sagemath
         python3 -m pip install git+https://github.com/ClemensHofstadler/operator_gb.git
     - name: Run test
-      run: |
-        cd ./test_InIdel
-        g++ -std=c++23 -O2 Buchberger_main.cpp -o Buchberger_main.run
-        g++ -std=c++23 -O2 F4_main.cpp -o F4_main.run
-        g++ -std=c++23 -O2 Buchberger_Zp_main.cpp -o Buchberger_Zp_main.run
-        g++ -std=c++23 -O2 F4_Zp_main.cpp -o F4_Zp_main.run
-        python3 run.py
+      run:
+        make test_InIdeal
