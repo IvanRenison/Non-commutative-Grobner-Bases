@@ -91,6 +91,10 @@ def create_tests():
 
 
 def run_test():
+
+  sum_times: list[float] = [0] * len(runners)
+  max_times: list[float] = [0] * len(runners)
+
   for test in range(100):
     assumptions, claim, k = tests[test]
 
@@ -122,6 +126,19 @@ def run_test():
         print(f" {name_run_outFile[0]} = {out}", end = "")
       print()
       exit(1)
+
+
+    for i in range(len(runners)):
+      sum_times[i] += times[i]
+      max_times[i] = max(max_times[i], times[i])
+
+
+  print("Average times:")
+  for i in range(len(runners)):
+    print(f"{runners[i][0]}: {sum_times[i] / 100:.10f}s")
+  print("Max times:")
+  for i in range(len(runners)):
+    print(f"{runners[i][0]}: {max_times[i]:.10f}s")
 
 
 create_tests()
