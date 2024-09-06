@@ -48,17 +48,21 @@ vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const 
 
 template<typename K, class ord = DegLexOrd>
 pair<Matrix<K>, map<Monomial, size_t, ord>> toMatrix(const vector<Poly<K, ord>>& G) {
-  set<Monomial, ord> T;
+  vector<Monomial> T;
   for (const auto& f : G) {
     for (const auto& [m, c] : f.terms) {
-      T.insert(m);
+      T.push_back(m);
     }
   }
 
+  sort(T.begin(), T.end(), ord());
+
   map<Monomial, size_t, ord> ids;
 
-  for (const auto& m : views::reverse(T)) {
-    ids[m] = ids.size();
+  for (size_t i = T.size(); i--; ) {
+    if (i + 1 == T.size() || T[i] != T[i + 1]) {
+      ids[T[i]] = ids.size();
+    }
   }
 
   size_t n = G.size(), m = ids.size();
@@ -116,6 +120,33 @@ vector<Poly<K, ord>> multiReduction(const vector<Poly<K, ord>>& G, const vector<
   return res;
 }
 
+template<typename K, class ord = DegLexOrd>
+vector<Poly<K, ord>> simplify(const vector<Poly<K, ord>>& G) {
+  size_t n = G.size();
+
+  auto [A, ids] = toMatrix(G);
+  rref(A);
+
+  vector<Monomial> ids_inv(ids.size());
+  for (const auto& [m, i] : ids) {
+    ids_inv[i] = m;
+  }
+
+  vector<Poly<K, ord>> res;
+  for (size_t i = 0; i < n; i++) {
+    Poly<K, ord> f;
+    for (size_t j = 0; j < ids.size(); j++) {
+      if (A[i][j] != K(0)) {
+        f += Poly<K, ord>(ids_inv[j]) * A[i][j];
+      }
+    }
+    if (!f.isZero()) {
+      res.push_back(f);
+    }
+  }
+
+  return res;
+}
 
 template<typename K, class ord = DegLexOrd>
 struct F4Incremental {
@@ -140,7 +171,9 @@ struct F4Incremental {
     });
   }
 
-  F4Incremental(const vector<Poly<K, ord>>& GG) : G(GG) {
+  F4Incremental(const vector<Poly<K, ord>>& GG) {
+    G = simplify(GG);
+
     for (size_t j = 0; j < G.size(); j++) {
       for (size_t i = 0; i <= j; i++) {
         for (const auto& amb : ambiguities(G[i].lm(), G[j].lm())) {

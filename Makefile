@@ -2,7 +2,9 @@
 
 COMP=g++ -Wall -Wextra -std=c++20 -O2
 
-%.run: %.cpp
+HEADER_FILES := $(shell find . -name "*.h")
+
+%.run: %.cpp $(HEADER_FILES)
 	$(COMP) $< -o $@
 
 
@@ -29,3 +31,10 @@ build_test_inideal: $(TEST_INIDEAL_RUN_FILES)
 test_InIdeal: build_test_inideal
 	cd test_InIdeal && python3 run.py
 
+
+
+clean:
+	rm -f *.run
+	rm -f test/*.run
+	rm -f test_InIdeal/*.run
+	rm -rf test_InIdeal/testCases
