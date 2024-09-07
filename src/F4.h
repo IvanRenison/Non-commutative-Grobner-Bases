@@ -152,6 +152,7 @@ template<typename K, class ord = DegLexOrd>
 struct F4Incremental {
 
   vector<Poly<K, ord>> G;
+  vector<HashInterval> G_lm_hashes;
   vector<tuple<Amb, size_t, size_t>> ambs, new_ambs;
   size_t k = 0;
 
@@ -174,9 +175,13 @@ struct F4Incremental {
   F4Incremental(const vector<Poly<K, ord>>& GG) {
     G = simplify(GG);
 
+    for (auto& f : G) {
+      G_lm_hashes.push_back(HashInterval(f.lm().vals));
+    }
+
     for (size_t j = 0; j < G.size(); j++) {
       for (size_t i = 0; i <= j; i++) {
-        for (const auto& amb : ambiguities(G[i].lm(), G[j].lm())) {
+        for (const auto& amb : ambiguities(G[i].lm(), G_lm_hashes[i], G[j].lm(), G_lm_hashes[j])) {
           ambs.push_back({amb, i, j});
         }
       }
@@ -200,13 +205,15 @@ struct F4Incremental {
 
       bool added = false;
       for (const auto& f : P_reduced) {
+        G.push_back(f);
+        G_lm_hashes.push_back(HashInterval(f.lm().vals));
+
         for (size_t k = 0; k < G.size(); k++) {
-          for (const auto& amb : ambiguities(G[k].lm(), f.lm())) {
-            new_ambs.push_back({amb, k, G.size()});
+          for (const auto& amb : ambiguities(G[k].lm(), G_lm_hashes[k], f.lm(), G_lm_hashes.back())) {
+            new_ambs.push_back({amb, k, G.size() - 1});
           }
         }
 
-        G.push_back(f);
         added = true;
       }
 
