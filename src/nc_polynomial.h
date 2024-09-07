@@ -115,9 +115,8 @@ struct Poly {
     return it == terms.end() ? K(0) : it->second;
   }
 
-  Monomial lm() const {
-    if (terms.empty()) return Monomial();
-    else return terms.rbegin()->first;
+  const Monomial& lm() const {
+    return terms.rbegin()->first;
   }
   K lc() const {
     if (terms.empty()) return K(0);
