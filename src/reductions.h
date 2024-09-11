@@ -12,7 +12,7 @@ reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
     return f;
   }
 
-  Monomial gm = g.lm();
+  const Monomial& gm = g.lm();
   K gc = g.lc();
 
   while (true) {
