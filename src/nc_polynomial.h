@@ -113,32 +113,28 @@ struct Poly {
     return res;
   }
 
-  Poly operator+=(const Poly& p) {
+  void operator+=(const Poly& p) {
     terms.insert(terms.end(), p.terms.begin(), p.terms.end());
     *this = constructor(terms);
-    return *this;
   }
-  Poly operator-=(const Poly& p) {
+  void operator-=(const Poly& p) {
     for (auto& [m, c] : p.terms) {
       terms.push_back({m, -c});
     }
     *this = constructor(terms);
-    return *this;
   }
-  Poly operator*=(const Poly& p) {
-    return *this = *this * p;
+  void operator*=(const Poly& p) {
+    *this = *this * p;
   }
-  Poly operator*=(Monomial m) {
+  void operator*=(Monomial m) {
     for (auto& [m_, d] : terms) {
       m_ *= m;
     }
-    return *this;
   }
-  Poly operator*=(K c) {
+  void operator*=(K c) {
     for (auto& [m, d] : terms) {
       d *= c;
     }
-    return *this;
   }
 
   K coeff(const Monomial& m) const {

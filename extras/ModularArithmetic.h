@@ -19,20 +19,20 @@ struct Mod {
   Mod operator*(Mod b) const {
     return Mod((x * b.x) % mod);
   }
-  Mod operator+=(Mod b) {
-    return *this = *this + b;
+  void operator+=(Mod b) {
+    *this = *this + b;
   }
-  Mod operator-=(Mod b) {
-    return *this = *this - b;
+  void operator-=(Mod b) {
+    *this = *this - b;
   }
-  Mod operator*=(Mod b) {
-    return *this = *this * b;
+  void operator*=(Mod b) {
+    *this = *this * b;
   }
-  Mod operator++() {
-    return *this = *this + Mod(1);
+  void operator++() {
+    *this = *this + Mod(1);
   }
-  Mod operator--() {
-    return *this = *this - Mod(1);
+  void operator--() {
+    *this = *this - Mod(1);
   }
   bool operator==(Mod b) const {
     return x == b.x;
@@ -72,8 +72,8 @@ struct Mod {
   Mod operator/(Mod b) const {
     return *this * invert(b);
   }
-  Mod operator/=(Mod b) {
-    return *this = *this / b;
+  void operator/=(Mod b) {
+    *this = *this / b;
   }
 
   friend ostream& operator<<(ostream& os, Mod m) {

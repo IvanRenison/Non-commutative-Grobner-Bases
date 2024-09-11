@@ -17,9 +17,8 @@ struct Monomial {
     res.vals.insert(res.vals.end(), m.vals.begin(), m.vals.end());
     return res;
   }
-  Monomial operator*=(const Monomial& m) {
+  void operator*=(const Monomial& m) {
     vals.insert(vals.end(), m.vals.begin(), m.vals.end());
-    return *this;
   }
   size_t size() const { return vals.size(); }
   // Returns the position of m.vals where this monomial divides m, or `numeric_limits<size_t>::max()` if it doesn't
