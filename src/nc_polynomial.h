@@ -20,15 +20,14 @@ struct Poly {
       return ord()(a.first, b.first);
     });
     // Convine repeated terms
-    terms.push_back(p[0]);
-    for (size_t i = 1; i < p.size(); i++) {
-      if (p[i - 1].first == terms.back().first) {
-        terms.back().second += terms[i].second;
+    for (size_t i = 0; i < p.size(); i++) {
+      if (!terms.empty() && p[i].first == terms.back().first) {
+        terms.back().second += p[i].second;
         if (terms.back().second == K(0)) {
           terms.pop_back();
         }
       } else {
-        terms.push_back(p[i]);
+        terms.push_back(move(p[i]));
       }
     }
   }
@@ -46,7 +45,7 @@ struct Poly {
           res.terms.pop_back();
         }
       } else {
-        res.terms.push_back(p[i]);
+        res.terms.push_back(move(p[i]));
       }
     }
     return res;
