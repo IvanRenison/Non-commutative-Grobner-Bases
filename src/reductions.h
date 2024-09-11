@@ -6,18 +6,6 @@ using namespace std;
 
 
 template<typename K, class ord = DegLexOrd>
-optional<Poly<K, ord>>
-reduce(Poly<K, ord>& f, const Poly<K, ord>& g, const Monomial& a, const Monomial& b) {
-  Monomial m = a * g.lm() * b;
-
-  if (!f.terms.count(m)) {
-    return {};
-  }
-
-  return f - (a * g * b) * (f[m] / g.lc());
-}
-
-template<typename K, class ord = DegLexOrd>
 Poly<K, ord>
 reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
   if (f.isZero()) {
