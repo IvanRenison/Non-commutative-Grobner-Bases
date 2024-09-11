@@ -6,52 +6,82 @@ using namespace std;
 
 template<typename K, class ord = DegLexOrd>
 struct Poly {
-  map<Monomial, K, ord> terms;
+  vector<pair<Monomial, K>> terms;
+  // Terms is mantened sorted by monomial with respect to ord
 
   Poly() {}
-  Poly(const Monomial& m, K c = K(1)) { terms[m] = c; }
-  Poly(const map<Monomial, K, ord>& p) : terms(p) {}
+  Poly(const Monomial& m, K c = K(1)) {
+    if (c != K(0)) {
+      terms.push_back({m, c});
+    }
+  }
+  Poly(vector<pair<Monomial, K>> p) {
+    sort(p.begin(), p.end(), [&](const auto& a, const auto& b) {
+      return ord()(a.first, b.first);
+    });
+    // Convine repeated terms
+    terms.push_back(p[0]);
+    for (size_t i = 1; i < p.size(); i++) {
+      if (p[i - 1].first == terms.back().first) {
+        terms.back().second += terms[i].second;
+        if (terms.back().second == K(0)) {
+          terms.pop_back();
+        }
+      } else {
+        terms.push_back(p[i]);
+      }
+    }
+  }
+
+  static Poly constructor(vector<pair<Monomial, K>>& p) {
+    sort(p.begin(), p.end(), [&](const auto& a, const auto& b) {
+      return ord()(a.first, b.first);
+    });
+    Poly res;
+    // Convine repeated terms
+    for (size_t i = 0; i < p.size(); i++) {
+      if (!res.terms.empty() && p[i].first == res.terms.back().first) {
+        res.terms.back().second += p[i].second;
+        if (res.terms.back().second == K(0)) {
+          res.terms.pop_back();
+        }
+      } else {
+        res.terms.push_back(p[i]);
+      }
+    }
+    return res;
+  }
 
   bool operator==(const Poly& p) const {
     return terms == p.terms;
   }
 
   Poly operator+(const Poly& p) const {
-    Poly res = *this;
-    for (const auto& [m, c] : p.terms) {
-      res.terms[m] += c;
-      if (res.terms[m] == K(0)) res.terms.erase(m);
-    }
-    return res;
+    vector<pair<Monomial, K>> res = terms;
+    res.insert(res.end(), p.terms.begin(), p.terms.end());
+    return constructor(res);
   }
   Poly operator-(const Poly& p) const {
-    Poly res = *this;
-    for (const auto& [m, c] : p.terms) {
-      res.terms[m] -= c;
-      if (res.terms[m] == K(0)) res.terms.erase(m);
+    vector<pair<Monomial, K>> res = p.terms;
+    for (auto& [m, c] : res) {
+      c = -c;
     }
-    return res;
+    res.insert(res.end(), terms.begin(), terms.end());
+    return constructor(res);
   }
   Poly operator*(const Poly& p) const {
-    Poly res;
+    vector<pair<Monomial, K>> res;
     for (const auto& [m1, c1] : terms) {
       for (const auto& [m2, c2] : p.terms) {
-        res.terms[m1 * m2] += c1 * c2;
+        res.push_back({m1 * m2, c1 * c2});
       }
     }
-    for (auto it = res.terms.begin(); it != res.terms.end();) {
-      if (it->second == K(0)) {
-        it = res.terms.erase(it);
-      } else {
-        it++;
-      }
-    }
-    return res;
+    return constructor(res);
   }
   Poly operator*(Monomial m) const {
-    Poly res;
-    for (const auto& [m_, d] : terms) {
-      res.terms[m_ * m] = d;
+    Poly res = *this;
+    for (auto& [m_, d] : res.terms) {
+      m_ *= m;
     }
     return res;
   }
@@ -76,32 +106,33 @@ struct Poly {
     return res;
   }
   Poly operator-() const {
-    Poly res;
-    for (const auto& [m, c] : terms) {
-      res.terms[m] = -c;
+    Poly res = *this;
+    for (auto& [m, d] : res.terms) {
+      d = -d;
     }
     return res;
   }
 
   Poly operator+=(const Poly& p) {
-    for (auto& [m, c] : p.terms) {
-      terms[m] += c;
-      if (terms[m] == K(0)) terms.erase(m);
-    }
+    terms.insert(terms.end(), p.terms.begin(), p.terms.end());
+    *this = constructor(terms);
     return *this;
   }
   Poly operator-=(const Poly& p) {
     for (auto& [m, c] : p.terms) {
-      terms[m] -= c;
-      if (terms[m] == K(0)) terms.erase(m);
+      terms.push_back({m, -c});
     }
+    *this = constructor(terms);
     return *this;
   }
   Poly operator*=(const Poly& p) {
     return *this = *this * p;
   }
   Poly operator*=(Monomial m) {
-    return *this = *this * m;
+    for (auto& [m_, d] : terms) {
+      m_ *= m;
+    }
+    return *this;
   }
   Poly operator*=(K c) {
     for (auto& [m, d] : terms) {
@@ -111,8 +142,8 @@ struct Poly {
   }
 
   K coeff(const Monomial& m) const {
-    auto it = terms.find(m);
-    return it == terms.end() ? K(0) : it->second;
+    auto it = lower_bound(terms.begin(), terms.end(), m, ord());
+    return it == terms.end() || it->first != m ? K(0) : it->second;
   }
 
   const Monomial& lm() const {
@@ -133,10 +164,6 @@ struct Poly {
     return terms.empty();
   }
 
-  K operator[](const Monomial& m) {
-    return terms[m];
-  }
-
   friend ostream& operator<<(ostream& os, const Poly& p) {
     os << p.terms.size() << '\n';
     for (const auto& [m, c] : p.terms) {
@@ -147,12 +174,14 @@ struct Poly {
   friend istream& operator>>(istream& is, Poly& p) {
     size_t n;
     is >> n;
+    vector<pair<Monomial, K>> terms(n);
     for (size_t i = 0; i < n; i++) {
       Monomial mon;
       K c;
       is >> c >> mon;
-      p.terms[mon] += c;
+      terms[i] = {mon, c};
     }
+    p = Poly::constructor(terms);
     return is;
   }
 
@@ -169,25 +198,25 @@ struct Poly {
     os << '\n';
   }
   static Poly nice_read(istream& is = cin) {
-    Poly res;
+    vector<pair<Monomial, K>> terms;
     while (true) {
       K c;
       is >> c;
       Monomial m = Monomial::nice_read(is);
-      res.terms[m] = c;
+      terms.push_back({m, c});
       while (is.peek() == ' ') is.ignore();
       if (is.peek() != '+') break;
       is.ignore();
     }
-    return res;
+    return Poly::constructor(terms);;
   }
 };
 
 template<typename K, class ord = DegLexOrd>
 Poly<K, ord> operator*(Monomial m, const Poly<K, ord>& p) {
-  Poly<K, ord> res;
-  for (const auto& [m_, d] : p.terms) {
-    res.terms[m * m_] = d;
+  Poly<K, ord> res = p;
+  for (auto& [m_, d] : res.terms) {
+    m_ = m * m_;
   }
   return res;
 }

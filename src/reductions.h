@@ -43,7 +43,7 @@ reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
       break;
     }
     auto [a, b] = *gm.divide(m);
-    f = f - (a * g * b) * (c / gc);
+    f -= (a * g * b) * (c / gc);
   }
 
   return f;

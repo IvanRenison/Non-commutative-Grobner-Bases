@@ -13,6 +13,9 @@ struct Mod {
   Mod operator-(Mod b) const {
     return Mod(x >= b.x ? x - b.x : x + mod - b.x);
   }
+  Mod operator-() const {
+    return Mod(x == 0 ? 0 : mod - x);
+  }
   Mod operator*(Mod b) const {
     return Mod((x * b.x) % mod);
   }
