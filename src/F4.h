@@ -153,23 +153,15 @@ struct F4Incremental {
 
   vector<Poly<K, ord>> G;
   vector<HashInterval> G_lm_hashes;
-  vector<tuple<Amb, size_t, size_t>> ambs, new_ambs;
-  size_t k = 0;
+  vector<vector<tuple<Amb, size_t, size_t>>> ambs_per_deg;
+  // We store ambiguities by their degree
 
-  void sort_ambs() {
-    sort(ambs.begin(), ambs.end(), [&](const tuple<Amb, size_t, size_t>& a, const tuple<Amb, size_t, size_t>& b) {
-      auto [amb_a, i_a, j_a] = a;
-      auto [amb_b, i_b, j_b] = b;
-
-      Monomial lm_a = amb_a.a * G[i_a].lm() * amb_a.b;
-      Monomial lm_b = amb_b.a * G[i_b].lm() * amb_b.b;
-
-      if (lm_a == lm_b) {
-        return pair{i_a, j_a} < pair{i_b, j_b};
-      } else {
-        return ord()(lm_a, lm_b);
-      }
-    });
+  void add_amb(Amb& amb, size_t i, size_t j) { // i and j are the indices of the polynomials in G
+    size_t d = amb.a.size() + amb.b.size() + G[i].lm().size();
+    while (ambs_per_deg.size() <= d) {
+      ambs_per_deg.push_back({});
+    }
+    ambs_per_deg[d].push_back({move(amb), i, j});
   }
 
   F4Incremental(const vector<Poly<K, ord>>& GG) {
@@ -181,55 +173,53 @@ struct F4Incremental {
 
     for (size_t j = 0; j < G.size(); j++) {
       for (size_t i = 0; i <= j; i++) {
-        for (const auto& amb : ambiguities(G[i].lm(), G_lm_hashes[i], G[j].lm(), G_lm_hashes[j])) {
-          ambs.push_back({amb, i, j});
+        vector<Amb> ambs_ij = ambiguities(G[i].lm(), G_lm_hashes[i], G[j].lm(), G_lm_hashes[j]);
+        for (auto& amb : ambs_ij) {
+          add_amb(amb, i, j);
         }
       }
     }
-
-    sort_ambs();
   }
 
   vector<Poly<K, ord>> next() {
-    while (true) {
+    for (size_t k = 0; k < ambs_per_deg.size(); k++) {
+      if (ambs_per_deg[k].empty()) {
+        continue;
+      }
+
       size_t n = G.size();
 
       vector<Poly<K, ord>> P;
-      for (size_t l = 0; l < 5 && k < ambs.size(); k++, l++) {
-        auto& [amb, i, j] = ambs[k];
+      for (auto& [amb, i, j] : ambs_per_deg[k]) {
         P.push_back(amb.a * G[i] * amb.b);
         P.push_back(amb.c * G[j] * amb.d);
       }
 
+      ambs_per_deg[k].clear();
+
       vector<Poly<K, ord>> P_reduced = multiReduction(G, P);
 
       bool added = false;
-      for (const auto& f : P_reduced) {
-        G.push_back(f);
-        G_lm_hashes.push_back(HashInterval(f.lm().vals));
+      for (Poly<K, ord>& f : P_reduced) {
 
-        for (size_t k = 0; k < G.size(); k++) {
-          for (const auto& amb : ambiguities(G[k].lm(), G_lm_hashes[k], f.lm(), G_lm_hashes.back())) {
-            new_ambs.push_back({amb, k, G.size() - 1});
+        for (size_t i = 0; i < G.size(); i++) {
+          vector<Amb> ambs_if = ambiguities(G[i].lm(), G_lm_hashes[i], f.lm(), G_lm_hashes.back());
+          for (auto& amb : ambs_if) {
+            add_amb(amb, i, G.size() - 1);
           }
         }
 
+        G_lm_hashes.push_back(HashInterval(f.lm().vals));
+        G.push_back(move(f));
         added = true;
-      }
-
-      if (k == ambs.size()) {
-        ambs = move(new_ambs);
-        k = 0;
-        sort_ambs();
       }
 
       if (added) {
         return {G.begin() + n, G.end()};
       }
-      if (ambs.empty()) {
-        return {};
-      }
     }
+
+    return {};
   }
 };
 
