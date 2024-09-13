@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
+#include <gmpxx.h>
 using namespace std;
 
 #include "../src/Buchberger.h"
-#include "../extras/Rational.h"
 
 
-typedef Poly<Ratio> P;
+typedef Poly<mpq_class> P;
 
 int main() {
 

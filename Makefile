@@ -5,7 +5,7 @@ COMP=g++ -Wall -Wextra -std=c++20 -O2
 HEADER_FILES := $(shell find . -name "*.h")
 
 %.run: %.cpp $(HEADER_FILES)
-	$(COMP) $< -o $@
+	$(COMP) $< -o $@ -lgmpxx -lgmp
 
 
 
