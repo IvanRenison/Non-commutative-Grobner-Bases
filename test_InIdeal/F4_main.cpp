@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
-#include <gmpxx.h>
+#include <givaro/qfield.h>
 using namespace std;
 
 #include "../src/F4.h"
 
-typedef Poly<mpq_class> P;
+typedef Poly<Givaro::Rational> P;
 
 int main() {
 

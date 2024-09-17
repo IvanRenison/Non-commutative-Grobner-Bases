@@ -1,17 +1,17 @@
 #include <bits/stdc++.h>
-#include <gmpxx.h>
+#include <givaro/qfield.h>
 using namespace std;
 
 #include "../src/nc_polynomial.h"
 #include "random_gens.h"
 
-typedef Poly<mpq_class> P;
+typedef Poly<Givaro::Rational> P;
 typedef Monomial::X X;
 
 void test_operations() {
   P p = random_poly(), q = random_poly(), r = random_poly();
   Monomial m = random_monomial();
-  mpq_class c0 = random_mpq_class(), c1 = random_mpq_class();
+  Givaro::Rational c0 = random_rational(), c1 = random_rational();
   assert(p + q == q + p);
   assert(p + (q + r) == (p + q) + r);
   assert(p + P() == p);
@@ -20,9 +20,9 @@ void test_operations() {
   assert((p + q) - q == p);
   assert(p * (q * r) == (p * q) * r);
   assert(p * P() == P());
-  assert(p * mpq_class(1) == p);
+  assert(p * Givaro::Rational(1) == p);
   assert(p * P(m) == p * m);
-  assert(p * mpq_class(0) == P());
+  assert(p * Givaro::Rational(0) == P());
   assert((p + q) * m == p * m + q * m);
   assert((p + q) * r == p * r + q * r);
   assert(r * (p + q) == r * p + r * q);
