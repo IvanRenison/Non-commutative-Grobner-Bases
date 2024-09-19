@@ -12,6 +12,8 @@ HEADER_FILES := $(shell find . -name "*.h")
 # Get a list of all .cpp files in the test folder
 TEST_FILES := $(wildcard test/*.cpp)
 TEST_RUN_FILES := $(patsubst %.cpp, %.run, $(TEST_FILES))
+BASE_FILES := $(wildcard test_base/*.cpp)
+BASE_RUN_FILES := $(patsubst %.cpp, %.run, $(BASE_FILES))
 
 %_test_run: %.run
 	./$<
@@ -31,6 +33,7 @@ build_test_inideal: $(TEST_INIDEAL_RUN_FILES)
 test_InIdeal: build_test_inideal
 	cd test_InIdeal && python3 run.py
 
+base_mains: $(BASE_RUN_FILES)
 
 
 clean:
