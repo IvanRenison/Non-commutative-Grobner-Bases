@@ -2,62 +2,77 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template<size_t mod>
+#include <givaro/modular.h>
+
+typedef Givaro::Modular<size_t> Field;
+
+template <size_t mod>
+const Field F = Field(mod);
+
+template <size_t mod>
 struct Mod {
   size_t x;
-  Mod(size_t xx) : x(xx < mod ? xx : xx % mod) {}
+
+  Mod(size_t x) : x(x % mod) {}
   Mod() : x(0) {}
-  Mod operator+(Mod b) const {
-    return Mod((x + b.x) >= mod ? x + b.x - mod : x + b.x);
-  }
-  Mod operator-(Mod b) const {
-    return Mod(x >= b.x ? x - b.x : x + mod - b.x);
-  }
-  Mod operator-() const {
-    return Mod(x == 0 ? 0 : mod - x);
-  }
-  Mod operator*(Mod b) const {
-    return Mod((x * b.x) % mod);
-  }
-  void operator+=(Mod b) {
-    *this = *this + b;
-  }
-  void operator-=(Mod b) {
-    *this = *this - b;
-  }
-  void operator*=(Mod b) {
-    *this = *this * b;
-  }
-  void operator++() {
-    *this = *this + Mod(1);
-  }
-  void operator--() {
-    *this = *this - Mod(1);
-  }
-  bool operator==(Mod b) const {
-    return x == b.x;
-  }
-  bool operator!=(Mod b) const {
-    return x != b.x;
-  }
-  bool operator<(Mod b) const {
-    return x < b.x;
-  }
-  bool operator>(Mod b) const {
-    return x > b.x;
-  }
-  bool operator<=(Mod b) const {
-    return x <= b.x;
-  }
-  bool operator>=(Mod b) const {
-    return x >= b.x;
+  Mod(const Mod& o) : x(o.x) {}
+
+  Mod operator=(const Mod& o) {
+    F<mod>.assign(x, o.x);
+    return *this;
   }
 
-  Mod invert(Mod a) const {
-    Mod r = a ^ (mod - 2);
-    return r;
+  Mod operator+(const Mod& o) const {
+    Mod res;
+    F<mod>.add(res.x, x, o.x);
+    return res;
   }
-  Mod operator^(size_t e) const {
+  Mod operator-(const Mod& o) const {
+    Mod res;
+    F<mod>.sub(res.x, x, o.x);
+    return res;
+  }
+  Mod operator*(const Mod& o) const {
+    Mod res;
+    F<mod>.mul(res.x, x, o.x);
+    return res;
+  }
+  Mod operator/(const Mod& o) const {
+    Mod res;
+    F<mod>.div(res.x, x, o.x);
+    return res;
+  }
+
+  Mod& operator+=(const Mod& o) {
+    F<mod>.addin(x, o.x);
+    return *this;
+  }
+  Mod& operator-=(const Mod& o) {
+    F<mod>.subin(x, o.x);
+    return *this;
+  }
+  Mod& operator*=(const Mod& o) {
+    F<mod>.mulin(x, o.x);
+    return *this;
+  }
+  Mod& operator/=(const Mod& o) {
+    F<mod>.divin(x, o.x);
+    return *this;
+  }
+  Mod operator-() const {
+    Mod res;
+    F<mod>.neg(res.x, x);
+    return res;
+  }
+  Mod operator++() {
+    F<mod>.addin(x, 1);
+    return *this;
+  }
+  Mod operator--() {
+    F<mod>.subin(x, 1);
+    return *this;
+  }
+  Mod pow(size_t e) const {
     Mod r = Mod(1);
     Mod b = *this;
     while (e > 0) {
@@ -69,14 +84,24 @@ struct Mod {
     }
     return r;
   }
-  Mod operator/(Mod b) const {
-    return *this * invert(b);
+
+  bool operator==(const Mod& o) const {
+    return F<mod>.areEqual(x, o.x);
   }
-  void operator/=(Mod b) {
-    *this = *this / b;
+  bool operator<(const Mod& o) const {
+    return x < o.x;
+  }
+  bool operator>(const Mod& o) const {
+    return x > o.x;
+  }
+  bool operator<=(const Mod& o) const {
+    return x <= o.x;
+  }
+  bool operator>=(const Mod& o) const {
+    return x >= o.x;
   }
 
-  friend ostream& operator<<(ostream& os, Mod m) {
+  friend ostream& operator<<(ostream& os, const Mod& m) {
     os << m.x;
     return os;
   }
@@ -84,6 +109,7 @@ struct Mod {
     is >> m.x;
     return is;
   }
+
 
   operator size_t() const {
     return x;

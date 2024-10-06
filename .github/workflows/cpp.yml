@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run:
-        sudo apt-get install libgivaro-dev
+        sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common
     - name: Run test
       run:
         make test
