@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#include "../src/matrix_ModularArithmetic.h"
 #include "../src/F4.h"
 #include "../extras/ModularArithmetic.h"
 
-const size_t mod = 1e9 + 7;
+const size_t mod = 101;
 typedef Mod<mod> Zp;
 
 typedef Poly<Zp> P;

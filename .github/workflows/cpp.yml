@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run:
-        sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common
+        sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common libntl-dev
     - name: Run test
       run:
         make test
@@ -31,10 +31,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
-        sudo apt-get install libgivaro-dev
+        sudo apt-get install libgivaro-dev libntl-dev
         python3 -m pip install pyahocorasick
         sudo apt install sagemath
         python3 -m pip install git+https://github.com/ClemensHofstadler/operator_gb.git
-    - name: Run test
+    - name: Run test in ideal
       run:
         make test_InIdeal

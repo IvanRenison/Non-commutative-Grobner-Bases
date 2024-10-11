@@ -4,7 +4,7 @@ using namespace std;
 #include "../src/Buchberger.h"
 #include "../extras/ModularArithmetic.h"
 
-const size_t mod = 1e9 + 7;
+const size_t mod = 101;
 typedef Mod<mod> Zp;
 
 typedef Poly<Zp> P;
