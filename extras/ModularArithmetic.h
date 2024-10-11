@@ -4,7 +4,7 @@ using namespace std;
 
 #include <givaro/modular.h>
 
-typedef Givaro::Modular<size_t> Field;
+typedef Givaro::Modular<size_t, size_t> Field;
 
 template <size_t mod>
 const Field F = Field(mod);

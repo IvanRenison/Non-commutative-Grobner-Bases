@@ -1,7 +1,7 @@
 .PRECIOUS: %.run
 
 COMP=g++ -Wall -Wextra -std=c++20 -O2
-LIBS=-lgivaro -llinbox -lgmp -lgmpxx -lblas -llapack
+LIBS=-lgivaro -llinbox -lgmp -lgmpxx -lntl -lblas -llapack -lopenblas
 
 HEADER_FILES := $(shell find . -name "*.h")
 
