@@ -10,6 +10,7 @@ typedef Poly<mpq_class> P;
 int main() {
 
   size_t n;
+
   cin >> n;
   vector<P> G(n);
   for (size_t i = 0; i < n; ++i) {

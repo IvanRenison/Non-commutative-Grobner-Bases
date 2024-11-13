@@ -6,6 +6,27 @@ using namespace std;
 
 typedef Monomial::X X;
 
+vector<size_t> slow_divide_indexes(const Monomial& m0, const Monomial& m1) {
+  size_t n = m0.size(), m = m1.size();
+
+  vector<size_t> ans;
+
+  for (int d = 0; d + n <= m; d++) {
+    bool ok = true;
+    for (size_t i = 0; i < n; i++) {
+      if (m0.vals[i] != m1.vals[d + i]) {
+        ok = false;
+        break;
+      }
+    }
+    if (ok) {
+      ans.push_back(d);
+    }
+  }
+
+  return ans;
+}
+
 bool slow_divides(const Monomial& m0, const Monomial& m1) {
   if (m0.vals.size() > m1.vals.size()) return false;
   for (size_t i = 0; i + m0.vals.size() <= m1.vals.size(); i++) {
@@ -19,6 +40,17 @@ bool slow_divides(const Monomial& m0, const Monomial& m1) {
     if (ok) return true;
   }
   return false;
+}
+
+vector<pair<Monomial, Monomial>> slow_divide(const Monomial& m0, const Monomial& m1) {
+  vector<size_t> is = slow_divide_indexes(m0, m1);
+  vector<pair<Monomial, Monomial>> ans;
+  for (size_t i : is) {
+    Monomial a(vector(m1.vals.begin(), m1.vals.begin() + i));
+    Monomial b(vector(m1.vals.begin() + i + m0.size(), m1.vals.end()));
+    ans.push_back({a, b});
+  }
+  return ans;
 }
 
 void test_prod_and_divide() {
@@ -44,8 +76,10 @@ void test_prod_and_divide() {
 
   assert(prod == m00);
 
-  optional<pair<Monomial, Monomial>> div = m1.divide(prod);
-  assert(div.has_value());
+  vector<pair<Monomial, Monomial>> divs = m1.divide(prod);
+  assert(!divs.empty());
+  vector<pair<Monomial, Monomial>> slow_divs = slow_divide(m1, prod);
+  assert(divs == slow_divs);
 }
 
 void test_divide() {
@@ -54,10 +88,28 @@ void test_divide() {
   bool div = slow_divides(m0, m1);
   assert(div == m0.divides(m1));
 
-  if (div) {
-    auto [a, b] = *m0.divide(m1);
-    assert(a * m0 * b == m1);
+  vector<size_t> is = m0.divide_indexes(m1);
+  vector<size_t> slow_is = slow_divide_indexes(m0, m1);
+
+  assert(is == slow_is);
+
+  vector<pair<Monomial, Monomial>> divs = m0.divide(m1);
+  vector<pair<Monomial, Monomial>> slow_divs = slow_divide(m0, m1);
+
+  assert(divs == slow_divs);
+
+  for (auto [a, b] : divs) {
+    Monomial m = a * m0 * b;
+    assert(m == m1);
   }
+}
+
+void test_eq() {
+  Monomial m = random_monomial();
+
+  vector<size_t> divs = m.divide_indexes(m);
+  assert(divs.size() == 1);
+  assert(divs[0] == 0);
 }
 
 void test_IO() {
@@ -80,6 +132,7 @@ int main() {
     test_prod_and_divide();
     test_divide();
     test_IO();
+    test_eq();
   }
 
   cout << "Test passed!" << endl;

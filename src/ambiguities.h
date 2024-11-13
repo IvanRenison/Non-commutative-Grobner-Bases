@@ -6,7 +6,19 @@ using namespace std;
 #include "Hashing.h"
 
 struct Amb {
-  Monomial a, b, c, d;
+  const Monomial& p, q;
+  enum Type { Inclusion, Overlap };
+  Type type;
+  size_t pos; // position where q starts in p
+  Monomial a, b;
+
+  size_t size() const {
+    if (type == Inclusion) {
+      return p.size();
+    } else {
+      return p.size() + b.size();
+    }
+  }
 };
 
 vector<Amb>
@@ -15,22 +27,33 @@ ambiguities(const Monomial& p, const HashInterval& p_hi, const Monomial& q, cons
 
   size_t n = p.size(), m = q.size();
 
-  for (int d = - m + 1; d < (int)n; d++) {
-    // q start d positions "after" p
+  // Inclusion of q inside p
+  vector<size_t> div_idxs = q.divide_indexes(p);
+  for (size_t i : div_idxs) {
+    Amb amb = {
+      p, q,
+      Amb::Inclusion,
+      i,
+      Monomial(vector(p.vals.begin(), p.vals.begin() + i)),
+      Monomial(vector(p.vals.begin() + i + q.size(), p.vals.end()))
+    };
+    res.push_back(amb);
+  }
 
-    int l = max(0, d), r = min(n, d + m);
+  // Overlap p q
+  for (size_t i = n >= m ? n - m + 1 : 1; i < n; i++) {
 
-    // p[l:r] == q[l - d: r - d]
-
-    bool valid = p_hi.hashInterval(l, r) == q_hi.hashInterval(l - d, r - d);
+    // p[i:] = q[:n - i]
+    bool valid = p_hi.hashInterval(i, n) == q_hi.hashInterval(0, n - i);
 
     if (!valid) continue;
 
     Amb amb = {
-      Monomial(vector(q.vals.begin(), q.vals.begin() + max(0, -d))),
-      Monomial(vector(q.vals.begin() + min(m, n - d), q.vals.end())),
-      Monomial(vector(p.vals.begin(), p.vals.begin() + max(0, d))),
-      Monomial(vector(p.vals.begin() + min(n, d + m), p.vals.end())),
+      p, q,
+      Amb::Overlap,
+      i,
+      Monomial(vector(p.vals.begin(), p.vals.begin() + i)),
+      Monomial(vector(q.vals.begin() + (n - i), q.vals.end()))
     };
 
     res.push_back(amb);

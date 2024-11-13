@@ -7,7 +7,11 @@ using namespace std;
 
 template<typename K, class ord = DegLexOrd>
 Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
-  return (amb.a * f * amb.b) / f.lc() - (amb.c * g * amb.d) / g.lc();
+  if (amb.type == Amb::Inclusion) {
+    return f / f.lc() - (amb.a * g * amb.b) / g.lc();
+  } else {
+    return (f * amb.b) / f.lc() - (amb.a * g) / g.lc();
+  }
 }
 
 template<typename K, class ord = DegLexOrd>
@@ -22,15 +26,23 @@ struct BuchbergerIncremental {
       G_lm_hashes.push_back(HashInterval(f.lm().vals));
     }
     for (size_t j = 0; j < G.size(); j++) {
-      for (size_t i = 0; i <= j; i++) {
+      for (size_t i = 0; i < G.size(); i++) {
         for (auto& amb : ambiguities(G[i].lm(), G_lm_hashes[i], G[j].lm(), G_lm_hashes[j])) {
           add_amb(amb, i, j);
+        }
+        if (i != j) {
+          for (auto& amb : ambiguities(G[j].lm(), G_lm_hashes[j], G[i].lm(), G_lm_hashes[i])) {
+            add_amb(amb, j, i);
+          }
         }
       }
     }
   }
 
   void add_amb(Amb& amb, size_t i, size_t j) {
+    if (i == j && amb.type == Amb::Inclusion) {
+      return;
+    }
     ambs.push_back({move(amb), i, j});
   }
 
@@ -53,6 +65,9 @@ struct BuchbergerIncremental {
         for (size_t k = 0; k < G.size() - 1; k++) {
           for (auto& amb : ambiguities(G[k].lm(), G_lm_hashes[k], s.lm(), G_lm_hashes.back())) {
             add_amb(amb, k, G.size() - 1);
+          }
+          for (auto& amb : ambiguities(s.lm(), G_lm_hashes.back(), G[k].lm(), G_lm_hashes[k])) {
+            add_amb(amb, G.size() - 1, k);
           }
         }
         t++;

@@ -21,10 +21,17 @@ struct Monomial {
     vals.insert(vals.end(), m.vals.begin(), m.vals.end());
   }
   size_t size() const { return vals.size(); }
-  // Returns the position of m.vals where this monomial divides m, or `numeric_limits<size_t>::max()` if it doesn't
-  size_t divide_index(const Monomial& m) const {
-    if (size() == 0) return 0;
-    if (size() > m.size()) return numeric_limits<size_t>::max();
+  bool empty() const { return vals.empty(); }
+
+  // Returns the positions of m.vals where this monomial divides m
+  vector<size_t> divide_indexes(const Monomial& m) const {
+    if (size() > m.size()) return {};
+    vector<size_t> ans;
+    if (size() == 0) {
+      ans = vector<size_t>(m.size() + 1, 0);
+      iota(ans.begin(), ans.end(), 0);
+      return ans;
+    }
 
     size_t n = size() + m.size();
 
@@ -45,21 +52,28 @@ struct Monomial {
       }
 
       if (i >= size() && z[i] >= size()) {
-        return i - size();
+        ans.push_back(i - size());
       }
     }
 
-    return numeric_limits<size_t>::max();
+    return ans;
   }
+
+  // Does this monomial divides m?
   bool divides(const Monomial& m) const {
-    return divide_index(m) < numeric_limits<size_t>::max();
+    return !divide_indexes(m).empty();
   }
-  optional<pair<Monomial, Monomial>> divide(const Monomial& m) const {
-    size_t i = divide_index(m);
-    if (i == numeric_limits<size_t>::max()) return {};
-    Monomial a(vector(m.vals.begin(), m.vals.begin() + i));
-    Monomial b(vector(m.vals.begin() + i + size(), m.vals.end()));
-    return {{a, b}};
+
+  // Make all possible divisions of m by this monomial
+  vector<pair<Monomial, Monomial>> divide(const Monomial& m) const {
+    vector<size_t> is = divide_indexes(m);
+    vector<pair<Monomial, Monomial>> ans;
+    for (size_t i : is) {
+      Monomial a(vector(m.vals.begin(), m.vals.begin() + i));
+      Monomial b(vector(m.vals.begin() + i + size(), m.vals.end()));
+      ans.push_back({a, b});
+    }
+    return ans;
   }
 
   friend ostream& operator<<(ostream& os, const Monomial& m) {

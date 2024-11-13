@@ -14,9 +14,9 @@ vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const 
 
   for (const auto& f : P) {
     if (!f.isZero()) {
-      auto it = f.terms.begin();
+      auto it = f.terms.rbegin();
       done.insert(it->first);
-      for (it++; it != f.terms.end(); it++) {
+      for (it++; it != f.terms.rend(); it++) {
         T.insert(it->first);
       }
     }
@@ -28,12 +28,12 @@ vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const 
     done.insert(t);
 
     for (const auto& g : G) {
-      optional<pair<Monomial, Monomial>> div = g.lm().divide(t);
-      if (div.has_value()) {
-        Poly<K, ord> h = div->first * g * div->second;
+      vector<pair<Monomial, Monomial>> div = g.lm().divide(t);
+      if (!div.empty()) {
+        Poly<K, ord> h = div[0].first * g * div[0].second;
         res.push_back(h);
-        auto it = h.terms.begin();
-        for (it++; it != h.terms.end(); it++) {
+        auto it = h.terms.rbegin();
+        for (it++; it != h.terms.rend(); it++) {
           if (!done.count(it->first)) {
             T.insert(it->first);
           }
@@ -157,7 +157,10 @@ struct F4Incremental {
   // We store ambiguities by their degree
 
   void add_amb(Amb& amb, size_t i, size_t j) { // i and j are the indices of the polynomials in G
-    size_t d = amb.a.size() + amb.b.size() + G[i].lm().size();
+    if (i == j && amb.type == Amb::Inclusion) {
+      return;
+    }
+    size_t d = amb.size();
     while (ambs_per_deg.size() <= d) {
       ambs_per_deg.push_back({});
     }
@@ -172,10 +175,16 @@ struct F4Incremental {
     }
 
     for (size_t j = 0; j < G.size(); j++) {
-      for (size_t i = 0; i <= j; i++) {
+      for (size_t i = 0; i < G.size(); i++) {
         vector<Amb> ambs_ij = ambiguities(G[i].lm(), G_lm_hashes[i], G[j].lm(), G_lm_hashes[j]);
         for (auto& amb : ambs_ij) {
           add_amb(amb, i, j);
+        }
+        if (i != j) {
+          vector<Amb> ambs_ji = ambiguities(G[j].lm(), G_lm_hashes[j], G[i].lm(), G_lm_hashes[i]);
+          for (auto& amb : ambs_ji) {
+            add_amb(amb, j, i);
+          }
         }
       }
     }
@@ -191,8 +200,13 @@ struct F4Incremental {
 
       vector<Poly<K, ord>> P;
       for (auto& [amb, i, j] : ambs_per_deg[k]) {
-        P.push_back(amb.a * G[i] * amb.b);
-        P.push_back(amb.c * G[j] * amb.d);
+        if (amb.type == Amb::Inclusion) {
+          P.push_back(amb.a * G[j] * amb.b);
+          P.push_back(G[i]);
+        } else {
+          P.push_back(G[i] * amb.b);
+          P.push_back(amb.a * G[j]);
+        }
       }
 
       ambs_per_deg[k].clear();
@@ -201,15 +215,19 @@ struct F4Incremental {
 
       bool added = false;
       for (Poly<K, ord>& f : P_reduced) {
+        G_lm_hashes.push_back(HashInterval(f.lm().vals));
 
         for (size_t i = 0; i < G.size(); i++) {
           vector<Amb> ambs_if = ambiguities(G[i].lm(), G_lm_hashes[i], f.lm(), G_lm_hashes.back());
           for (auto& amb : ambs_if) {
-            add_amb(amb, i, G.size() - 1);
+            add_amb(amb, i, G.size());
+          }
+          vector<Amb> ambs_fi = ambiguities(f.lm(), G_lm_hashes.back(), G[i].lm(), G_lm_hashes[i]);
+          for (auto& amb : ambs_if) {
+            add_amb(amb, G.size(), i);
           }
         }
 
-        G_lm_hashes.push_back(HashInterval(f.lm().vals));
         G.push_back(move(f));
         added = true;
       }
@@ -234,13 +252,13 @@ IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, 
   F4Incremental bi(G);
 
   for (size_t i = 0; i < max_sz; i++) {
-    vector<Poly<K, ord>> p = bi.next();
-    if (p.empty()) {
-      return NotInIdeal;
-    }
     f = reduce(f, bi.G);
     if (f.isZero()) {
       return InIdeal;
+    }
+    vector<Poly<K, ord>> p = bi.next();
+    if (p.empty()) {
+      return NotInIdeal;
     }
   }
 

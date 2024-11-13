@@ -20,9 +20,10 @@ reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
     Monomial m;
     K c;
     for (auto& [fm, fc] : views::reverse(f.terms)) {
-      if (gm.divides(fm)) {
-        m = fm;
-        c = fc;
+      auto divs = gm.divide(fm);
+      if (divs.size() > 0) {
+        auto [a, b] = divs[0];
+        f -= (a * g * b) * (fc / gc);
         found = true;
         break;
       }
@@ -30,8 +31,6 @@ reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
     if (!found) {
       break;
     }
-    auto [a, b] = *gm.divide(m);
-    f -= (a * g * b) * (c / gc);
   }
 
   return f;
