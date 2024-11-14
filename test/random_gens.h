@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include <givaro/qfield.h>
+#include <gmpxx.h>
 using namespace std;
 
 #include "../src/nc_polynomial.h"
@@ -15,11 +15,12 @@ Monomial random_monomial() {
   return Monomial(vals0);
 }
 
-typedef Poly<Givaro::Rational> P;
+typedef Poly<mpq_class> P;
 
-Givaro::Rational random_rational() {
+mpq_class random_rational() {
   int num = rand() % 10 - 5, den = rand() % 5 + 1;
-  Givaro::Rational r(num, den);
+  mpq_class r(num, den);
+  r.canonicalize();
   return r;
 }
 
@@ -28,7 +29,7 @@ P random_poly() {
   P p;
   for (uint i = 0; i < n; i++) {
     Monomial m = random_monomial();
-    Givaro::Rational r = random_rational();
+    mpq_class r = random_rational();
     p += P(m, r);
   }
   return p;
