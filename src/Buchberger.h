@@ -40,9 +40,10 @@ struct BuchbergerIncremental {
   }
 
   void add_amb(Amb& amb, size_t i, size_t j) {
-    if (i == j && amb.type == Amb::Inclusion) {
+    if (checkDeletionCriteria(G, amb, i, j)) {
       return;
     }
+
     ambs.push_back({move(amb), i, j});
   }
 

@@ -157,7 +157,7 @@ struct F4Incremental {
   // We store ambiguities by their degree
 
   void add_amb(Amb& amb, size_t i, size_t j) { // i and j are the indices of the polynomials in G
-    if (i == j && amb.type == Amb::Inclusion) {
+    if (checkDeletionCriteria(G, amb, i, j)) {
       return;
     }
     size_t d = amb.size();
