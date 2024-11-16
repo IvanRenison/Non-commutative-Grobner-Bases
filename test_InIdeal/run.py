@@ -15,14 +15,14 @@ os.system = my_os_system
 PolyRep = list[tuple[int, list[int]]]
 
 # Set seed for reproducibility
-random.seed(0)
+random.seed(1)
 
 def random_poly(x: int) -> PolyRep:
   poly: PolyRep = []
   m: int = random.randint(1, 5)
   for _ in range(m):
     c: int = random.randint(1, 5)
-    k: int = random.randint(1, 5)
+    k: int = random.randint(0, 5)
     vars: list[int] = [random.randint(0, x) for _ in range(k)]
     poly.append((c, vars))
   return poly

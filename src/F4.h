@@ -251,7 +251,7 @@ template<typename K, class ord = DegLexOrd>
 IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
   F4Incremental bi(G);
 
-  for (size_t i = 0; i < max_sz; i++) {
+  for (size_t i = G.size(); i < max_sz;) {
     f = reduce(f, bi.G);
     if (f.isZero()) {
       return InIdeal;
@@ -260,6 +260,7 @@ IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, 
     if (p.empty()) {
       return NotInIdeal;
     }
+    i += p.size();
   }
 
   return Unknown;

@@ -10,13 +10,14 @@ names = F._first_ngens(10)
 
 def read_poly():
   n = int(input())
-  poly = sage.Integer(0)
+  poly = names[0] - names[0] # Zero polynomial, I don't now a better way to do this
   for _ in range(n):
     line = input().split()
     monomial = sage.Integer(int(line[0]))
-    for i in range(2, len(line)):
-      x = int(line[i])
-      monomial *= names[x]
+    if (len(line) > 2):
+      for i in range(2, len(line)):
+        x = int(line[i])
+        monomial *= names[x]
     poly += monomial
   return poly
 
