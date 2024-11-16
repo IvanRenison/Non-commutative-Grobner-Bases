@@ -6,9 +6,8 @@ using namespace std;
 
 void test() {
   Monomial m0 = random_monomial(), m1 = random_monomial();
-  HashInterval h0(m0.vals), h1(m1.vals);
 
-  vector<Amb> ambs = ambiguities(m0, h0, m1, h1);
+  vector<Amb> ambs = ambiguities(m0, m1);
 
   for (auto& amb : ambs) {
     if (amb.type == Amb::Inclusion) {

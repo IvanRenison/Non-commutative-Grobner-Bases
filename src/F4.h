@@ -152,7 +152,6 @@ template<typename K, class ord = DegLexOrd>
 struct F4Incremental {
 
   vector<Poly<K, ord>> G;
-  vector<HashInterval> G_lm_hashes;
   vector<vector<tuple<Amb, size_t, size_t>>> ambs_per_deg;
   // We store ambiguities by their degree
 
@@ -170,18 +169,14 @@ struct F4Incremental {
   F4Incremental(const vector<Poly<K, ord>>& GG) {
     G = simplify(GG);
 
-    for (auto& f : G) {
-      G_lm_hashes.push_back(HashInterval(f.lm().vals));
-    }
-
     for (size_t j = 0; j < G.size(); j++) {
       for (size_t i = 0; i < G.size(); i++) {
-        vector<Amb> ambs_ij = ambiguities(G[i].lm(), G_lm_hashes[i], G[j].lm(), G_lm_hashes[j]);
+        vector<Amb> ambs_ij = ambiguities(G[i].lm(), G[j].lm());
         for (auto& amb : ambs_ij) {
           add_amb(amb, i, j);
         }
         if (i != j) {
-          vector<Amb> ambs_ji = ambiguities(G[j].lm(), G_lm_hashes[j], G[i].lm(), G_lm_hashes[i]);
+          vector<Amb> ambs_ji = ambiguities(G[j].lm(), G[i].lm());
           for (auto& amb : ambs_ji) {
             add_amb(amb, j, i);
           }
@@ -215,14 +210,12 @@ struct F4Incremental {
 
       bool added = false;
       for (Poly<K, ord>& f : P_reduced) {
-        G_lm_hashes.push_back(HashInterval(f.lm().vals));
-
         for (size_t i = 0; i < G.size(); i++) {
-          vector<Amb> ambs_if = ambiguities(G[i].lm(), G_lm_hashes[i], f.lm(), G_lm_hashes.back());
+          vector<Amb> ambs_if = ambiguities(G[i].lm(), f.lm());
           for (auto& amb : ambs_if) {
             add_amb(amb, i, G.size());
           }
-          vector<Amb> ambs_fi = ambiguities(f.lm(), G_lm_hashes.back(), G[i].lm(), G_lm_hashes[i]);
+          vector<Amb> ambs_fi = ambiguities(f.lm(), G[i].lm());
           for (auto& amb : ambs_if) {
             add_amb(amb, G.size(), i);
           }

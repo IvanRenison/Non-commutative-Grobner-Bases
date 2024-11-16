@@ -2,6 +2,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#include "Zfunc.h"
+
 struct Monomial {
   typedef unsigned short X;
 
@@ -35,23 +37,10 @@ struct Monomial {
 
     size_t n = size() + m.size();
 
-    auto S = [&](size_t i) -> X {
-      return i < size() ? vals[i] : m.vals[i - size()];
-    };
+    vector<size_t> z = Z(vals, m.vals);
 
-    // Using Z function idea
-    vector<size_t> z(n);
-    int l = -1, r = -1;
-    for (size_t i = 1; i < n; i++) {
-      z[i] = (int)i >= r ? 0 : min((size_t)r - i, z[i - l]);
-      while (i + z[i] < n && S(i + z[i]) == S(z[i])) {
-        z[i]++;
-      }
-      if ((int)(i + z[i]) > r) {
-        l = i, r = i + z[i];
-      }
-
-      if (i >= size() && z[i] >= size()) {
+    for (size_t i = size(); i < n; i++) {
+      if (z[i] >= size()) {
         ans.push_back(i - size());
       }
     }

@@ -3,7 +3,6 @@
 using namespace std;
 
 #include "nc_polynomial.h"
-#include "Hashing.h"
 
 struct Amb {
   const Monomial& p, q;
@@ -30,7 +29,7 @@ struct Amb {
 };
 
 vector<Amb>
-ambiguities(const Monomial& p, const HashInterval& p_hi, const Monomial& q, const HashInterval& q_hi) {
+ambiguities(const Monomial& p, const Monomial& q) {
   vector<Amb> res;
 
   size_t n = p.size(), m = q.size();
@@ -48,11 +47,13 @@ ambiguities(const Monomial& p, const HashInterval& p_hi, const Monomial& q, cons
     res.push_back(move(amb));
   }
 
+  vector<size_t> z = Z(q.vals, p.vals);
+
   // Overlap p q
   for (size_t i = n >= m ? n - m + 1 : 1; i < n; i++) {
 
     // p[i:] = q[:n - i]
-    bool valid = p_hi.hashInterval(i, n) == q_hi.hashInterval(0, n - i);
+    bool valid = z[m + i] >= n - i;
 
     if (!valid) continue;
 
