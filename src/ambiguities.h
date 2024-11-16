@@ -45,7 +45,7 @@ ambiguities(const Monomial& p, const HashInterval& p_hi, const Monomial& q, cons
       Monomial(vector(p.vals.begin(), p.vals.begin() + i)),
       Monomial(vector(p.vals.begin() + i + q.size(), p.vals.end()))
     };
-    res.push_back(amb);
+    res.push_back(move(amb));
   }
 
   // Overlap p q
@@ -64,7 +64,7 @@ ambiguities(const Monomial& p, const HashInterval& p_hi, const Monomial& q, cons
       Monomial(vector(q.vals.begin() + (n - i), q.vals.end()))
     };
 
-    res.push_back(amb);
+    res.push_back(move(amb));
   }
 
   return res;
@@ -73,8 +73,7 @@ ambiguities(const Monomial& p, const HashInterval& p_hi, const Monomial& q, cons
 /* Check if amb with o satisfy the general deletion criteria (Corollary 4.35 of Hof20). Pay attention polynomial indexes also.
 Returns true if amb does not have to be added */
 bool checkGeneralDeletionCriteria(const Amb& amb, const Monomial& o) {
-  Monomial m = amb.lm();
-  return o.divides(m);
+  return o.divides(amb.lm());
 }
 
 /* Check if amb with o satisfy the specifics deletion criteria (Corollary 4.36 and 4.47 of Hof20). Pay attention polynomial indexes also.
