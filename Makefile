@@ -36,6 +36,8 @@ test_InIdeal: build_test_inideal
 
 base_mains: $(BASE_RUN_FILES)
 
+run_base: base_mains
+	cd test_base && python3 run.py
 
 clean:
 	rm -f *.run

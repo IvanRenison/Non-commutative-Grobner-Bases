@@ -122,10 +122,11 @@ struct Monomial {
     }
   }
   static Monomial nice_read(istream& is = cin) {
-    string s;
-    is >> s;
+    while (is.peek() == ' ') is.ignore();
     Monomial m;
-    for (char c : s) {
+    while (isalpha(is.peek())) {
+      char c;
+      is >> c;
       m.vals.push_back(c - 'a');
     }
     return m;

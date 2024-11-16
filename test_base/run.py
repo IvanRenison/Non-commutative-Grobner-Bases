@@ -1,29 +1,50 @@
 import os
+import subprocess
 import time
-from typing import Optional
+import sys
 
 os_system = os.system
 
 def my_os_system(cmd: str):
   print(f"\033[90m{cmd}\033[0m")
-  os_system(cmd)
+  try:
+    process = subprocess.Popen(cmd, shell=True)
+    process.wait()
+  except KeyboardInterrupt:
+    process.terminate()
+    process.wait()
+    sys.exit(1)
 
 os.system = my_os_system
 
-runners: list[tuple[str, str, str]] = [
-  ("Buch", "./base_Buchberger.run", "buch.out"),
-  ("F4", "./base_F4.run", "F4.out"),
-  ("GB", "python ./base_operator_gb.py", "gb.out")
+def make_tests():
+  os.system(f"rm -rf ./testCases")
+  os.system(f"mkdir -p ./testCases")
+
+  for i in range(1, 14): # tri
+    os.system(f"echo {i} | ./trisGen.run > ./testCases/tri{i}.in")
+
+  for i in range(2, 4): # Nichols
+    os.system(f"echo {i} | ./NicholsGen.run > ./testCases/Nichols{i}.in")
+
+make_tests()
+
+runners: list[tuple[str, str]] = [
+  ("Buch", "./base_Buchberger.run"),
+  #("F4", "./base_F4.run"),
+  ("GB", "python ./base_operator_gb.py")
 ]
 
 # test files
-inputs: list[str] = [f for f in os.listdir("./made-testCases") if f.endswith('.txt')]
+inputs: list[str] = [f for f in os.listdir("./testCases") if f.endswith('.in')]
 
 # Run the program and return the time it took
 def run_program(index: int, test: int) -> float:
-  _, runner, out_file = runners[index]
+  name, runner = runners[index]
+  in_file = inputs[test]
+  out_file = in_file.replace('.in', '_') + name + ".out"
   start_time = time.time()
-  os.system(f"{runner} < ./made-testCases/{inputs[test]} > ./{out_file}")
+  os.system(f"{runner} < ./testCases/{inputs[test]} > ./testCases/{out_file}")
   end_time = time.time()
   return end_time - start_time
 

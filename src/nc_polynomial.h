@@ -194,14 +194,23 @@ struct Poly {
   }
   static Poly nice_read(istream& is = cin) {
     vector<pair<Monomial, K>> terms;
-    while (true) {
+    bool next_neg = false;
+    while (!is.eof()) {
       K c;
       is >> c;
-      Monomial m = Monomial::nice_read(is);
-      terms.push_back({m, c});
+      if (next_neg) c = -c;
+      next_neg = false;
       while (is.peek() == ' ') is.ignore();
-      if (is.peek() != '+') break;
-      is.ignore();
+      if (!isalpha(is.peek())) {  // Empty monomial
+        terms.push_back({Monomial(), c});
+      } else {
+        Monomial m = Monomial::nice_read(is);
+        terms.push_back({m, c});
+        while (is.peek() == ' ') is.ignore();
+        if (is.peek() == '-') next_neg = true;
+        else if (is.peek() != '+') break;
+        is.ignore();
+      }
     }
     return Poly::constructor(terms);;
   }
