@@ -59,9 +59,42 @@ struct Monomial {
     return ans;
   }
 
+  // Return the first position where this monomial divides m
+  optional<size_t> one_divide_index(const Monomial& m) const {
+    if (size() > m.size()) return {};
+    if (size() == 0) {
+      return 0;
+    }
+
+    size_t n = size() + m.size();
+
+    auto S = [&](size_t i) -> X {
+      return i < size() ? vals[i] : m.vals[i - size()];
+    };
+
+    // Using Z function idea
+    vector<size_t> z(n);
+    int l = -1, r = -1;
+    for (size_t i = 1; i < n; i++) {
+      z[i] = (int)i >= r ? 0 : min((size_t)r - i, z[i - l]);
+      while (i + z[i] < n && S(i + z[i]) == S(z[i])) {
+        z[i]++;
+      }
+      if ((int)(i + z[i]) > r) {
+        l = i, r = i + z[i];
+      }
+
+      if (i >= size() && z[i] >= size()) {
+        return i - size();
+      }
+    }
+
+    return {};
+  }
+
   // Does this monomial divides m?
   bool divides(const Monomial& m) const {
-    return !divide_indexes(m).empty();
+    return one_divide_index(m).has_value();
   }
 
   // Make all possible divisions of m by this monomial
