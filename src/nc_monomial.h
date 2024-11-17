@@ -98,6 +98,14 @@ struct Monomial {
     return ans;
   }
 
+  optional<pair<Monomial, Monomial>> one_divide(const Monomial& m) const {
+    auto i = one_divide_index(m);
+    if (!i.has_value()) return {};
+    Monomial a(vector(m.vals.begin(), m.vals.begin() + *i));
+    Monomial b(vector(m.vals.begin() + *i + size(), m.vals.end()));
+    return {{a, b}};
+  }
+
   friend ostream& operator<<(ostream& os, const Monomial& m) {
     os << m.size();
     for (auto x : m.vals) {

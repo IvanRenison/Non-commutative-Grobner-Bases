@@ -4,10 +4,9 @@ using namespace std;
 
 #include "nc_polynomial.h"
 
-
+/* Reduce inplace with one polynomial */
 template<typename K, class ord = DegLexOrd>
-Poly<K, ord>
-reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
+Poly<K, ord> reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
   if (f.isZero()) {
     return f;
   }
@@ -20,9 +19,9 @@ reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
     Monomial m;
     K c;
     for (auto& [fm, fc] : views::reverse(f.terms)) {
-      auto divs = gm.divide(fm);
-      if (divs.size() > 0) {
-        auto [a, b] = divs[0];
+      auto divs = gm.one_divide(fm);
+      if (divs.has_value()) {
+        auto& [a, b] = *divs;
         f -= (a * g * b) * (fc / gc);
         found = true;
         break;
@@ -36,9 +35,9 @@ reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
   return f;
 }
 
+/* Reduce in place with a vector of polynomials */
 template<typename K, class ord = DegLexOrd>
-Poly<K, ord>
-reduce(Poly<K, ord> f, const vector<Poly<K, ord>>& G) {
+void reduce(Poly<K, ord>& f, const vector<Poly<K, ord>>& G) {
   while (true) {
     bool red = false;
     for (const auto& g : G) {
@@ -53,5 +52,4 @@ reduce(Poly<K, ord> f, const vector<Poly<K, ord>>& G) {
       break;
     }
   }
-  return f;
 }

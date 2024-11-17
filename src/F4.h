@@ -245,7 +245,7 @@ IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, 
   F4Incremental bi(G);
 
   for (size_t i = G.size(); i < max_sz;) {
-    f = reduce(f, bi.G);
+    reduce(f, bi.G);
     if (f.isZero()) {
       return InIdeal;
     }

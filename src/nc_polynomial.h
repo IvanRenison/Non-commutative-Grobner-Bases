@@ -250,7 +250,7 @@ struct PolyOrd {
         it1 != p1.terms.rend() && it2 != p2.terms.rend();
         it1++, it2++) {
       if (it1->first != it2->first) {
-        return it1->first < it2->first;
+        return ord()(it1->first, it2->first);
       }
     }
 

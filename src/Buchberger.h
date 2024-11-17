@@ -50,11 +50,11 @@ struct BuchbergerIncremental {
       return res;
     }
     while (!ambs.empty()) {
-      auto [amb, i, j] = ambs.front();
+      auto [amb, i, j] = move(ambs.front());
       ambs.pop_front();
 
       Poly<K, ord> s = S_poly(amb, G[i], G[j]);
-      s = reduce(s, G);
+      reduce(s, G);
 
       if (!s.isZero()) {
         G.push_back(s);
@@ -90,7 +90,7 @@ IdealMembershipStatus inIdeal(const vector<Poly<K, ord>>& G, Poly<K, ord> f, siz
     if (!p.has_value()) {
       return NotInIdeal;
     }
-    f = reduce(f, bi.G);
+    reduce(f, bi.G);
     if (f.isZero()) {
       return InIdeal;
     }
