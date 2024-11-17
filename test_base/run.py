@@ -37,6 +37,7 @@ runners: list[tuple[str, str]] = [
 
 # test files
 inputs: list[str] = [f for f in os.listdir("./testCases") if f.endswith('.in')]
+inputs.sort()
 
 # Run the program and return the time it took
 def run_program(index: int, test: int) -> float:
