@@ -183,21 +183,38 @@ struct Poly {
   void nice_print(ostream& os = cout) const {
     for (auto it = terms.begin(); it != terms.end(); it++) {
       if (it != terms.begin()) {
-        os << " + ";
+        if (it->second >= K(0)) {
+          os << " + ";
+        } else {
+          os << " - ";
+        }
+        if (abs(it->second) != K(1)) {
+          os << abs(it->second) << ' ';
+        }
+        it->first.nice_print(os);
+      } else {
+        if (it->second != K(1) || it->first.vals.empty()) {
+          os << it->second << ' ';
+        }
+        it->first.nice_print(os);
       }
-      if (it->second != K(1)) {
-        os << it->second << ' ';
-      }
-      it->first.nice_print(os);
     }
     os << '\n';
   }
   static Poly nice_read(istream& is = cin) {
     vector<pair<Monomial, K>> terms;
     bool next_neg = false;
-    while (!is.eof()) {
-      K c;
-      is >> c;
+    while (is.peek() == ' ') is.ignore();
+    if (is.peek() == '-') {
+      next_neg = true;
+      is.ignore();
+    }
+    while (!is.eof() && is.peek() != '\n') {
+      while (is.peek() == ' ') is.ignore();
+      K c = K(1);
+      if (!isalpha(is.peek())) {
+        is >> c;
+      }
       if (next_neg) c = -c;
       next_neg = false;
       while (is.peek() == ' ') is.ignore();
@@ -206,12 +223,13 @@ struct Poly {
       } else {
         Monomial m = Monomial::nice_read(is);
         terms.push_back({m, c});
-        while (is.peek() == ' ') is.ignore();
-        if (is.peek() == '-') next_neg = true;
-        else if (is.peek() != '+') break;
-        is.ignore();
       }
+      while (is.peek() == ' ') is.ignore();
+      if (is.peek() == '-') next_neg = true;
+      else if (is.peek() != '+') break;
+      is.ignore();
     }
+    if (is.peek() == '\n') is.ignore();
     return Poly::constructor(terms);;
   }
 };

@@ -20,6 +20,7 @@ int main() {
 
   while (!F4.next().empty()) {}
 
+  cout << F4.G.size() << endl;
   for (auto f : F4.G) {
     f.nice_print();
   }

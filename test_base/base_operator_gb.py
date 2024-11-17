@@ -10,7 +10,7 @@ names = F._first_ngens(10)
 
 def read_poly():
   n = int(input())
-  poly = sage.Integer(0)
+  poly = names[0] - names[0] # Zero polynomial, I don't now a better way to do this
   for _ in range(n):
     line = input().split()
     monomial = sage.Integer(int(line[0]))
@@ -20,6 +20,13 @@ def read_poly():
     poly += monomial
   return poly
 
+def print_poly(poly): # Print with the format that the C++ code reads
+  s: str = poly.__repr__()
+  s = s.replace('*', '')
+  for c in "abcdefghij":
+    for i in range(2, 100):
+      s = s.replace(f'{c}^{i}', f'{c}{f"{c}"*(i-1)}')
+  print(s)
 
 def main():
 
@@ -38,7 +45,10 @@ def main():
   # Restore stdout
   #sys.stdout = old_stdout
 
-  print(*G, sep='\n')
+  print(len(G))
+  for poly in G:
+    print_poly(poly)
+  #print(*G, sep='\n')
 
 
 if __name__ == '__main__':

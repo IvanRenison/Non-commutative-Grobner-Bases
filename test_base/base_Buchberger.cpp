@@ -20,6 +20,7 @@ int main() {
 
   while (bi.next().has_value()) {}
 
+  cout << bi.G.size() << endl;
   for (auto f : bi.G) {
     f.nice_print();
   }

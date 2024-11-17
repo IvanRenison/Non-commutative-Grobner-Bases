@@ -52,8 +52,24 @@ def run_program(index: int, test: int) -> float:
 times: list[list[float]] = [[0.0 for _ in range(len(runners))] for _ in range(len(inputs))]
 
 for i in range(len(inputs)):
+  # Run programs
   for j in range(len(runners)):
     times[i][j] = run_program(j, i)
+
+  name0, runner0 = runners[0]
+  in_file = inputs[i]
+  out_file0 = in_file.replace('.in', '_') + name0 + ".out"
+
+  # Check they gave equivalent results
+  for j in range(1, len(runners)):
+    name, runner = runners[j]
+    out_file = in_file.replace('.in', '_') + name + ".out"
+
+    os.system(f"./compare_bases.run ./testCases/{out_file0} ./testCases/{out_file} > ./testCases/compare_bases.out")
+
+    if open("./testCases/compare_bases.out", "r").read().strip() != "Equivalent":
+      print(f"Test {in_file} failed, {name0} and {name} gave different results")
+      sys.exit(1)
 
 # Print the results in a nicely formatted table
 header = ["Test Case"] + [runner[0] for runner in runners]
