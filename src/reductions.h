@@ -10,6 +10,9 @@ Poly<K, ord> reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
   if (f.isZero()) {
     return f;
   }
+  if (g.isZero()) {
+    return f;
+  }
 
   const Monomial& gm = g.lm();
   K gc = g.lc();
@@ -52,4 +55,24 @@ void reduce(Poly<K, ord>& f, const vector<Poly<K, ord>>& G) {
       break;
     }
   }
+}
+
+/* Reduces several polynomials with each other */
+template<typename K, class ord = DegLexOrd>
+void interReduce(vector<Poly<K, ord>>& G) {
+  size_t n = G.size();
+  sort(G.begin(), G.end(), PolyOrd<K, ord>());
+
+  for (size_t i = 0; i < n; i++) {
+    for (size_t j = i; j--; ) {
+      G[i] = reduce(G[i], G[j]);
+      if (PolyOrd<K, ord>()(G[i], G[j])) {
+        swap(G[i], G[j]);
+        i--;
+      }
+    }
+  }
+
+  // Erase all zero polynomials from the start
+  G.erase(remove(G.begin(), G.end(), Poly<K, ord>()), G.end());
 }

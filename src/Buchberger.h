@@ -21,6 +21,7 @@ struct BuchbergerIncremental {
   size_t t = 0;
 
   BuchbergerIncremental(const vector<Poly<K, ord>>& GG) : G(GG) {
+    interReduce(G);
     for (size_t j = 0; j < G.size(); j++) {
       for (size_t i = 0; i < G.size(); i++) {
         for (auto& amb : ambiguities(G[i].lm(), G[j].lm())) {
