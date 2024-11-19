@@ -30,10 +30,12 @@ def make_tests():
 make_tests()
 
 runners: list[tuple[str, str]] = [
-  ("Buch", "./base_Buchberger.run"),
-  #("F4", "./base_F4.run"),
+  ("Buch", "./../../mains/base_Buchberger.run"),
+  #("F4", "./../../mains/base_F4.run"),
   ("GB", "python ./base_operator_gb.py")
 ]
+
+bases_comparator: str = "./../../mains/compare_bases.run"
 
 # test files
 inputs: list[str] = [f for f in os.listdir("./testCases") if f.endswith('.in')]
@@ -66,7 +68,7 @@ for i in range(len(inputs)):
     name, runner = runners[j]
     out_file = in_file.replace('.in', '_') + name + ".out"
 
-    os.system(f"./compare_bases.run ./testCases/{out_file0} ./testCases/{out_file} > ./testCases/compare_bases.out")
+    os.system(f"{bases_comparator} ./testCases/{out_file0} ./testCases/{out_file} > ./testCases/compare_bases.out")
 
     if open("./testCases/compare_bases.out", "r").read().strip() != "Equivalent":
       print(f"Test {in_file} failed, {name0} and {name} gave different results")

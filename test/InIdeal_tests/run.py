@@ -55,9 +55,9 @@ in_out_folder: str = "./testCases"
 in_file: str = "inIdeal.in"
 
 runners: list[tuple[str, str, str]] = [
-  ("Buch", "./Buchberger_main.run", "buch_outIdeal.out"),
-  ("F4", "./F4_main.run", "F4_outIdeal.out"),
-  ("GB", "python ./operator_gb_main.py", "gb_outIdeal.out")
+  ("Buch", "./../../mains/InIdeal_Buchberger.run", "buch_outIdeal.out"),
+  ("F4", "./../../mains/InIdeal_F4.run", "F4_outIdeal.out"),
+  ("GB", "python ./InIdeal_operator_gb.py", "gb_outIdeal.out")
 ]
 
 # Create the folder
@@ -145,8 +145,8 @@ create_tests()
 run_test()
 
 runners = [
-  ("Buch_Zp", "./Buchberger_Zp_main.run", "buch_Zp_outIdeal.out"),
-  ("F4_Zp", "./F4_Zp_main.run", "F4_Zp_outIdeal.out"),
+  ("Buch_Zp", "./../../mains/Zp_InIdeal_Buchberger.run", "buch_Zp_outIdeal.out"),
+  ("F4_Zp", "./../../mains/Zp_InIdeal_F4.run", "F4_Zp_outIdeal.out"),
 ]
 
 run_test()

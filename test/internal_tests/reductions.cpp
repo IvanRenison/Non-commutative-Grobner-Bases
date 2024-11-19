@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "../src/reductions.h"
+#include "reductions.h"
 #include "random_gens.h"
 
 typedef Poly<mpq_class> P;

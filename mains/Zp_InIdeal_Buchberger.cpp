@@ -1,16 +1,17 @@
 #include <bits/stdc++.h>
-#include <gmpxx.h>
 using namespace std;
 
-#include "../src/Buchberger.h"
+#include "Buchberger.h"
+#include "../extras/ModularArithmetic.h"
 
+const size_t mod = 1e9 + 7;
+typedef Mod<mod> Zp;
 
-typedef Poly<mpq_class> P;
+typedef Poly<Zp> P;
 
 int main() {
 
   size_t n;
-
   cin >> n;
   vector<P> G(n);
   for (size_t i = 0; i < n; ++i) {

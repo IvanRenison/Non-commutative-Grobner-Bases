@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "../src/F4.h"
+#include "F4.h"
 #include "../extras/ModularArithmetic.h"
 
 const size_t mod = 1e9 + 7;

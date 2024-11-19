@@ -8,48 +8,51 @@ on:
 
 jobs:
 
-  test:
+  internal_tests:
 
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install dependencies
-      run:
+      run: |
+        sudo apt-get update
         sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common libflint-dev
     - name: Run test
       run:
-        make test
+        make internal_tests
 
-  test_InIdeal:
+  InIdeal_tests:
 
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
-        sudo apt-get install libgivaro-dev sagemath
+        sudo apt-get update
+        sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common libflint-dev sagemath
         python3 -m pip install pyahocorasick
         python3 -m pip install git+https://github.com/ClemensHofstadler/operator_gb.git
     - name: Run test
       run:
-        make test_InIdeal
+        make InIdeal_tests
 
-  test_base:
+  base_tests:
 
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
-        sudo apt-get install libgivaro-dev sagemath
+        sudo apt-get update
+        sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common libflint-dev sagemath
         python3 -m pip install pyahocorasick
         python3 -m pip install git+https://github.com/ClemensHofstadler/operator_gb.git
     - name: Run test
       run:
-        make run_base
+        make base_tests

@@ -2,7 +2,7 @@
 #include <gmpxx.h>
 using namespace std;
 
-#include "../src/Buchberger.h"
+#include "F4.h"
 
 typedef mpq_class R;
 typedef Poly<R> P;
@@ -16,14 +16,13 @@ int main() {
     cin >> G[i];
   }
 
-  BuchbergerIncremental<R> bi(G);
+  F4Incremental<R> F4(G);
 
-  while (bi.next().has_value()) {}
+  while (!F4.next().empty()) {}
 
-  cout << bi.G.size() << endl;
-  for (auto f : bi.G) {
+  cout << F4.G.size() << endl;
+  for (auto f : F4.G) {
     f.nice_print();
   }
-
 }
 

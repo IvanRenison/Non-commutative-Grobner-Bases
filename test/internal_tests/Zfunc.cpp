@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "../src/Zfunc.h"
+#include "Zfunc.h"
 
 template <typename Iterator>
 vector<size_t> slow_Z(Iterator start, Iterator end) {

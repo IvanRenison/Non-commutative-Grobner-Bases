@@ -2,45 +2,43 @@
 
 COMP=g++ -Wall -Wextra -std=c++20 -O2
 LIBS=-lgivaro -llinbox -lgmp -lgmpxx -lblas -llapack -lflint
+INCLUDE=-I./src
 
 HEADER_FILES := $(shell find . -name "*.h")
+MAIN_FILES := $(wildcard mains/*.cpp)
+MAIN_RUN_FILES := $(patsubst %.cpp, %.run, $(MAIN_FILES))
+INTERNAL_TEST_FILES := $(wildcard test/internal_tests/*.cpp)
+INTERNAL_TEST_RUN_FILES := $(patsubst %.cpp, %.run, $(INTERNAL_TEST_FILES))
+BASE_TESTS_FILES := $(wildcard test/base_tests/*.cpp)
+BASE_TESTS_RUN_FILES := $(patsubst %.cpp, %.run, $(BASE_TESTS_FILES))
 
 %.run: %.cpp $(HEADER_FILES)
-	$(COMP) $< -o $@ $(LIBS)
+	$(COMP) $(INCLUDE) $< -o $@ $(LIBS)
 
-
-
-# Get a list of all .cpp files in the test folder
-TEST_FILES := $(wildcard test/*.cpp)
-TEST_RUN_FILES := $(patsubst %.cpp, %.run, $(TEST_FILES))
-BASE_FILES := $(wildcard test_base/*.cpp)
-BASE_RUN_FILES := $(patsubst %.cpp, %.run, $(BASE_FILES))
+build_mains: $(MAIN_RUN_FILES)
 
 %_test_run: %.run
 	./$<
 
 # The test target depends on all the .run targets
-test: $(patsubst %.cpp, %_test_run, $(TEST_FILES))
+internal_tests: $(patsubst %.cpp, %_test_run, $(INTERNAL_TEST_FILES))
 
-build_test: $(TEST_RUN_FILES)
+build_tests: $(TEST_RUN_FILES)
 
+base_tests: $(BASE_TESTS_RUN_FILES) build_mains
+	cd test/base_tests && python3 run.py
 
+InIdeal_tests: $(TEST_INIDEAL_RUN_FILES) build_mains
+	cd test/InIdeal_tests && python3 run.py
 
-TEST_INIDEAL_FILES := $(wildcard test_InIdeal/*.cpp)
-TEST_INIDEAL_RUN_FILES := $(patsubst %.cpp, %.run, $(TEST_INIDEAL_FILES))
-
-build_test_inideal: $(TEST_INIDEAL_RUN_FILES) $(HEADER_FILES)
-
-test_InIdeal: build_test_inideal
-	cd test_InIdeal && python3 run.py
-
-base_mains: $(BASE_RUN_FILES) $(HEADER_FILES)
-
-run_base: base_mains
-	cd test_base && python3 run.py
+test: internal_tests base_tests InIdeal_tests
 
 clean:
 	rm -f *.run
+	rm -f mains/*.run
 	rm -f test/*.run
-	rm -f test_InIdeal/*.run
-	rm -rf test_InIdeal/testCases
+	rm -f test/base_tests/*.run
+	rm -f test/internal_tests/*.run
+	rm -f test/InIdeal_tests/*.run
+	rm -rf test/base_tests/testCases
+	rm -rf test/InIdeal_tests/testCases

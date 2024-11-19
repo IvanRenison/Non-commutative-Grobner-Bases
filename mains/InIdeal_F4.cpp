@@ -1,13 +1,12 @@
 #include <bits/stdc++.h>
+#include <gmpxx.h>
+
 using namespace std;
 
-#include "../src/Buchberger.h"
-#include "../extras/ModularArithmetic.h"
+#include "matrix_mpq_class.h"
+#include "F4.h"
 
-const size_t mod = 1e9 + 7;
-typedef Mod<mod> Zp;
-
-typedef Poly<Zp> P;
+typedef Poly<mpq_class> P;
 
 int main() {
 
@@ -24,9 +23,7 @@ int main() {
   size_t k;
   cin >> k;
 
-  k += G.size();
-
-  IdealMembershipStatus ims = inIdeal(G, f, k);
+  IdealMembershipStatus ims = inIdeal_F4(G, f, k);
 
   if (ims == InIdeal) {
     cout << "InIdeal\n";

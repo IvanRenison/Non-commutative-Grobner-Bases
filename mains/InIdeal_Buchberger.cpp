@@ -1,16 +1,16 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
-
 using namespace std;
 
-#include "../src/matrix_mpq_class.h"
-#include "../src/F4.h"
+#include "Buchberger.h"
+
 
 typedef Poly<mpq_class> P;
 
 int main() {
 
   size_t n;
+
   cin >> n;
   vector<P> G(n);
   for (size_t i = 0; i < n; ++i) {
@@ -23,7 +23,9 @@ int main() {
   size_t k;
   cin >> k;
 
-  IdealMembershipStatus ims = inIdeal_F4(G, f, k);
+  k += G.size();
+
+  IdealMembershipStatus ims = inIdeal(G, f, k);
 
   if (ims == InIdeal) {
     cout << "InIdeal\n";
