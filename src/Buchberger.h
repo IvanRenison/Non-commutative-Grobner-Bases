@@ -17,22 +17,14 @@ Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g
 template<typename K, class ord = DegLexOrd>
 struct BuchbergerIncremental {
   vector<Poly<K, ord>> G;
+  vector<bool> removed;
   deque<tuple<Amb, size_t, size_t>> ambs;
   size_t t = 0;
 
-  BuchbergerIncremental(const vector<Poly<K, ord>>& GG) : G(GG) {
-    interReduce(G);
-    for (size_t j = 0; j < G.size(); j++) {
-      for (size_t i = 0; i < G.size(); i++) {
-        for (auto& amb : ambiguities(G[i].lm(), G[j].lm())) {
-          add_amb(amb, i, j);
-        }
-        if (i != j) {
-          for (auto& amb : ambiguities(G[j].lm(), G[i].lm())) {
-            add_amb(amb, j, i);
-          }
-        }
-      }
+  BuchbergerIncremental(vector<Poly<K, ord>> GG) {
+    interReduce(GG);
+    for (size_t i = 0; i < GG.size(); i++) {
+      add_poly(GG[i]);
     }
   }
 
@@ -42,6 +34,19 @@ struct BuchbergerIncremental {
     }
 
     ambs.push_back({move(amb), i, j});
+  }
+
+  void add_poly(const Poly<K, ord>& f) {
+    G.push_back(f);
+    removed.push_back(false);
+    for (size_t k = 0; k < G.size() - 1; k++) if (!removed[k]) {
+      for (auto& amb : ambiguities(G[k].lm(), f.lm())) {
+        add_amb(amb, k, G.size() - 1);
+      }
+      for (auto& amb : ambiguities(f.lm(), G[k].lm())) {
+        add_amb(amb, G.size() - 1, k);
+      }
+    }
   }
 
   optional<Poly<K, ord>> next() {
@@ -55,21 +60,18 @@ struct BuchbergerIncremental {
       ambs.pop_front();
 
       Poly<K, ord> s = S_poly(amb, G[i], G[j]);
-      reduce(s, G);
+      reduce(s, G, removed);
+
+      if (amb.type == Amb::Inclusion) {
+        removed[i] = true;
+      }
 
       if (!s.isZero()) {
-        G.push_back(s);
-        for (size_t k = 0; k < G.size() - 1; k++) {
-          for (auto& amb : ambiguities(G[k].lm(), s.lm())) {
-            add_amb(amb, k, G.size() - 1);
-          }
-          for (auto& amb : ambiguities(s.lm(), G[k].lm())) {
-            add_amb(amb, G.size() - 1, k);
-          }
-        }
+        add_poly(s);
         t++;
         return s;
       }
+
     }
 
     return {};

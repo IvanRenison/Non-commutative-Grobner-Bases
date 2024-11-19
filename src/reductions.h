@@ -57,6 +57,25 @@ void reduce(Poly<K, ord>& f, const vector<Poly<K, ord>>& G) {
   }
 }
 
+/* Reduce in place with a vector of polynomials, but only with the nor marked */
+template<typename K, class ord = DegLexOrd>
+void reduce(Poly<K, ord>& f, const vector<Poly<K, ord>>& G, const vector<bool> marks) {
+  while (true) {
+    bool red = false;
+    for (size_t i = 0; i < G.size(); i++) if (!marks[i]) {
+      Poly<K, ord> f_ = reduce(f, G[i]);
+      if (f != f_) {
+        f = f_;
+        red = true;
+        break;
+      }
+    }
+    if (!red) {
+      break;
+    }
+  }
+}
+
 /* Reduces several polynomials with each other */
 template<typename K, class ord = DegLexOrd>
 void interReduce(vector<Poly<K, ord>>& G) {
