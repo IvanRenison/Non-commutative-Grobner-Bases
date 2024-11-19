@@ -73,6 +73,6 @@ void interReduce(vector<Poly<K, ord>>& G) {
     }
   }
 
-  // Erase all zero polynomials from the start
+  // Erase all zero polynomials
   G.erase(remove(G.begin(), G.end(), Poly<K, ord>()), G.end());
 }
