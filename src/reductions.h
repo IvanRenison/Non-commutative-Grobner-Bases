@@ -4,19 +4,20 @@ using namespace std;
 
 #include "nc_polynomial.h"
 
-/* Reduce inplace with one polynomial */
+/* Reduce inplace with one polynomial, return true iff the polynomial was reduced */
 template<typename K, class ord = DegLexOrd>
-Poly<K, ord> reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
+bool reduce(Poly<K, ord>& f, const Poly<K, ord>& g) {
   if (f.isZero()) {
-    return f;
+    return false;
   }
   if (g.isZero()) {
-    return f;
+    return false;
   }
 
   const Monomial& gm = g.lm();
   K gc = g.lc();
 
+  bool ans = false;
   while (true) {
     bool found = false;
     Monomial m;
@@ -27,6 +28,7 @@ Poly<K, ord> reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
         auto& [a, b] = *divs;
         f -= (a * g * b) * (fc / gc);
         found = true;
+        ans = true;
         break;
       }
     }
@@ -35,18 +37,17 @@ Poly<K, ord> reduce(Poly<K, ord> f, const Poly<K, ord>& g) {
     }
   }
 
-  return f;
+  return ans;
 }
 
-/* Reduce in place with a vector of polynomials */
+/* Reduce in place with a vector of polynomials, return true iff the polynomial was reduced */
 template<typename K, class ord = DegLexOrd>
 void reduce(Poly<K, ord>& f, const vector<Poly<K, ord>>& G) {
   while (true) {
     bool red = false;
     for (const auto& g : G) {
-      Poly<K, ord> f_ = reduce(f, g);
-      if (f != f_) {
-        f = f_;
+      bool red_now = reduce(f, g);
+      if (red_now) {
         red = true;
         break;
       }
@@ -63,9 +64,8 @@ void reduce(Poly<K, ord>& f, const vector<Poly<K, ord>>& G, const vector<bool> m
   while (true) {
     bool red = false;
     for (size_t i = 0; i < G.size(); i++) if (!marks[i]) {
-      Poly<K, ord> f_ = reduce(f, G[i]);
-      if (f != f_) {
-        f = f_;
+      bool red_now = reduce(f, G[i]);
+      if (red_now) {
         red = true;
         break;
       }
@@ -84,7 +84,7 @@ void interReduce(vector<Poly<K, ord>>& G) {
 
   for (size_t i = 0; i < n; i++) {
     for (size_t j = i; j--; ) {
-      G[i] = reduce(G[i], G[j]);
+      reduce(G[i], G[j]);
       if (PolyOrd<K, ord>()(G[i], G[j])) {
         swap(G[i], G[j]);
         i--;
