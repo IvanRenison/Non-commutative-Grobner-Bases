@@ -56,17 +56,60 @@ struct Poly {
   }
 
   Poly operator+(const Poly& p) const {
-    vector<pair<Monomial, K>> res = terms;
-    res.insert(res.end(), p.terms.begin(), p.terms.end());
-    return constructor(res);
+    Poly res;
+    auto it = terms.begin(), itp = p.terms.begin();
+    while (it != terms.end() && itp != p.terms.end()) {
+      if (it->first == itp->first) {
+        K c = it->second + itp->second;
+        if (c != K(0)) {
+          res.terms.push_back({it->first, c});
+        }
+        it++, itp++;
+      } else if (ord()(it->first, itp->first)) {
+        res.terms.push_back(*it);
+        it++;
+      } else {
+        res.terms.push_back(*itp);
+        itp++;
+      }
+    }
+    while (it != terms.end()) {
+      res.terms.push_back(*it);
+      it++;
+    }
+    while (itp != p.terms.end()) {
+      res.terms.push_back(*itp);
+      itp++;
+    }
+    return res;
   }
   Poly operator-(const Poly& p) const {
-    vector<pair<Monomial, K>> res = p.terms;
-    for (auto& [m, c] : res) {
-      c = -c;
+    Poly res;
+    auto it = terms.begin(), itp = p.terms.begin();
+    while (it != terms.end() && itp != p.terms.end()) {
+      if (it->first == itp->first) {
+        K c = it->second - itp->second;
+        if (c != K(0)) {
+          res.terms.push_back({it->first, c});
+        }
+        it++, itp++;
+      } else if (ord()(it->first, itp->first)) {
+        res.terms.push_back(*it);
+        it++;
+      } else {
+        res.terms.push_back({itp->first, -itp->second});
+        itp++;
+      }
     }
-    res.insert(res.end(), terms.begin(), terms.end());
-    return constructor(res);
+    while (it != terms.end()) {
+      res.terms.push_back(*it);
+      it++;
+    }
+    while (itp != p.terms.end()) {
+      res.terms.push_back({itp->first, -itp->second});
+      itp++;
+    }
+    return res;
   }
   Poly operator*(const Poly& p) const {
     vector<pair<Monomial, K>> res;
@@ -113,14 +156,60 @@ struct Poly {
   }
 
   void operator+=(const Poly& p) {
-    terms.insert(terms.end(), p.terms.begin(), p.terms.end());
-    *this = constructor(terms);
+    vector<pair<Monomial, K>> new_terms;
+    auto it = terms.begin(), itp = p.terms.begin();
+    while (it != terms.end() && itp != p.terms.end()) {
+      if (it->first == itp->first) {
+        K c = it->second + itp->second;
+        if (c != K(0)) {
+          new_terms.push_back({it->first, c});
+        }
+        it++, itp++;
+      } else if (ord()(it->first, itp->first)) {
+        new_terms.push_back(move(*it));
+        it++;
+      } else {
+        new_terms.push_back(*itp);
+        itp++;
+      }
+    }
+    while (it != terms.end()) {
+      new_terms.push_back(move(*it));
+      it++;
+    }
+    while (itp != p.terms.end()) {
+      new_terms.push_back(*itp);
+      itp++;
+    }
+    terms = move(new_terms);
   }
   void operator-=(const Poly& p) {
-    for (auto& [m, c] : p.terms) {
-      terms.push_back({m, -c});
+    vector<pair<Monomial, K>> new_terms;
+    auto it = terms.begin(), itp = p.terms.begin();
+    while (it != terms.end() && itp != p.terms.end()) {
+      if (it->first == itp->first) {
+        K c = it->second - itp->second;
+        if (c != K(0)) {
+          new_terms.push_back({it->first, c});
+        }
+        it++, itp++;
+      } else if (ord()(it->first, itp->first)) {
+        new_terms.push_back(move(*it));
+        it++;
+      } else {
+        new_terms.push_back({itp->first, -itp->second});
+        itp++;
+      }
     }
-    *this = constructor(terms);
+    while (it != terms.end()) {
+      new_terms.push_back(move(*it));
+      it++;
+    }
+    while (itp != p.terms.end()) {
+      new_terms.push_back({itp->first, -itp->second});
+      itp++;
+    }
+    terms = move(new_terms);
   }
   void operator*=(const Poly& p) {
     *this = *this * p;
