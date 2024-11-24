@@ -17,27 +17,16 @@ bool reduce(Poly<K, ord>& f, const Poly<K, ord>& g) {
   const Monomial& gm = g.lm();
   K gc = g.lc();
 
-  bool ans = false;
-  while (true) {
-    bool found = false;
-    Monomial m;
-    K c;
-    for (auto& [fm, fc] : views::reverse(f.terms)) {
-      auto divs = gm.one_divide(fm);
-      if (divs.has_value()) {
-        auto& [a, b] = *divs;
-        f -= (a * g * b) * (fc / gc);
-        found = true;
-        ans = true;
-        break;
-      }
-    }
-    if (!found) {
-      break;
+  for (auto& [fm, fc] : views::reverse(f.terms)) {
+    auto divs = gm.one_divide(fm);
+    if (divs.has_value()) {
+      auto& [a, b] = *divs;
+      f -= (a * g * b) * (fc / gc);
+      return true;
     }
   }
 
-  return ans;
+  return false;
 }
 
 /* Reduce in place with a vector of polynomials, return true iff the polynomial was reduced */
