@@ -18,10 +18,10 @@ int main() {
 
   BuchbergerIncremental<R> bi(G);
 
-  while (bi.next().has_value()) {}
+  vector<P> base = bi.fullBase();
 
-  cout << bi.G.size() << endl;
-  for (auto f : bi.G) {
+  cout << base.size() << endl;
+  for (auto f : base) {
     f.nice_print();
   }
 

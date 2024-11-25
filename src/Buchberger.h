@@ -22,7 +22,6 @@ struct BuchbergerIncremental {
   size_t t = 0;
 
   BuchbergerIncremental(vector<Poly<K, ord>> GG) {
-    interReduce(GG);
     for (size_t i = 0; i < GG.size(); i++) {
       add_poly(GG[i]);
     }
@@ -76,6 +75,15 @@ struct BuchbergerIncremental {
 
     return {};
   }
+
+  vector<Poly<K, ord>> fullBase() {
+    while (next().has_value()) {}
+    vector<Poly<K, ord>> res;
+    for (size_t i = 0; i < G.size(); i++) if (!removed[i]) {
+      res.push_back(G[i]);
+    }
+    return res;
+  }
 };
 
 enum IdealMembershipStatus {
@@ -100,4 +108,124 @@ IdealMembershipStatus inIdeal(const vector<Poly<K, ord>>& G, Poly<K, ord> f, siz
   }
 
   return Unknown;
+}
+
+template<typename K, class ord = DegLexOrd>
+tuple<Poly<K, ord>, tuple<Monomial, Monomial, K>, tuple<Monomial, Monomial, K>>
+S_polyReconstruct(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
+  Monomial fa, fb, ga, gb;
+  K fc, gc;
+  if (amb.type == Amb::Inclusion) {
+    fc = K(1) / f.lc();
+    ga = amb.a;
+    gb = amb.b;
+    gc = K(-1) / g.lc();
+  } else {
+    fb = amb.b;
+    fc = K(1) / f.lc();
+    ga = amb.a;
+    gc = K(-1) / g.lc();
+  }
+  return {fa * f * fb * fc + ga * g * gb * gc, {fa, fb, fc}, {ga, gb, gc}};
+}
+
+template<typename K, class ord = DegLexOrd>
+struct BuchbergerIncrementalReconstruct {
+  vector<Poly<K, ord>> G;
+  vector<InIdealPoly<K, ord>> G_rec;
+  vector<bool> removed;
+  deque<tuple<Amb, size_t, size_t>> ambs;
+  size_t t = 0;
+
+  BuchbergerIncrementalReconstruct(vector<Poly<K, ord>> GG) {
+    for (size_t i = 0; i < GG.size(); i++) {
+      InIdealPoly<K, ord> f_rec;
+      f_rec.terms.push_back({Monomial(), i, Monomial(), K(1)});
+      add_poly(GG[i], f_rec);
+    }
+  }
+
+  void add_amb(Amb& amb, size_t i, size_t j) {
+    if (checkDeletionCriteria(G, amb, i, j)) {
+      return;
+    }
+
+    ambs.push_back({move(amb), i, j});
+  }
+
+  void add_poly(const Poly<K, ord>& f, InIdealPoly<K, ord>& f_rec) {
+    G.push_back(f);
+    G_rec.push_back(move(f_rec));
+    removed.push_back(false);
+    for (size_t k = 0; k < G.size() - 1; k++) if (!removed[k]) {
+      for (auto& amb : ambiguities(G[k].lm(), f.lm())) {
+        add_amb(amb, k, G.size() - 1);
+      }
+      for (auto& amb : ambiguities(f.lm(), G[k].lm())) {
+        add_amb(amb, G.size() - 1, k);
+      }
+    }
+  }
+
+  optional<Poly<K, ord>> next() {
+    if (t < G.size()) {
+      Poly<K, ord> res = G[t];
+      t++;
+      return res;
+    }
+    while (!ambs.empty()) {
+      auto [amb, i, j] = move(ambs.front());
+      ambs.pop_front();
+
+      auto [s, gi_rec, gj_rec] = S_polyReconstruct(amb, G[i], G[j]);
+      InIdealPoly<K, ord> s_rec = reduceReconstruct(s, G, G_rec, removed);
+
+      if (amb.type == Amb::Inclusion) {
+        removed[i] = true;
+      }
+
+      if (!s.isZero()) {
+        s_rec *= K(-1);
+        auto& [ai, bi, ci] = gi_rec;
+        auto& [aj, bj, cj] = gj_rec;
+        s_rec += ai * G_rec[i] * bi * ci;
+        s_rec += aj * G_rec[j] * bj * cj;
+        add_poly(s, s_rec);
+        t++;
+        return s;
+      }
+
+    }
+
+    return {};
+  }
+
+  vector<InIdealPoly<K, ord>> fullBase() {
+    while (next().has_value()) {}
+    vector<InIdealPoly<K, ord>> res;
+    for (size_t i = 0; i < G.size(); i++) if (!removed[i]) {
+      res.push_back(G_rec[i]);
+    }
+    return res;
+  }
+};
+
+template<typename K, class ord = DegLexOrd>
+pair<IdealMembershipStatus, optional<InIdealPoly<K, ord>>>
+inIdealReconstruct(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
+  BuchbergerIncrementalReconstruct bi(G);
+
+  InIdealPoly<K, ord> res;
+  for (size_t i = G.size(); i < max_sz; i++) {
+    optional<Poly<K, ord>> p = bi.next();
+    if (!p.has_value()) {
+      return {NotInIdeal, {}};
+    }
+    res += reduceReconstruct(f, bi.G, bi.G_rec, bi.removed);
+    if (f.isZero()) {
+      return {InIdeal, res};
+    }
+  }
+
+  return {Unknown, {}};
 }

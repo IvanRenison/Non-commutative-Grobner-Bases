@@ -17,18 +17,6 @@ def my_os_system(cmd: str):
 
 os.system = my_os_system
 
-def make_tests():
-  os.system(f"rm -rf ./testCases")
-  os.system(f"mkdir -p ./testCases")
-
-  for i in range(1, 14): # tri
-    os.system(f"echo {i} | ./trisGen.run > ./testCases/tri{i}.in")
-
-  for i in range(2, 4): # Nichols
-    os.system(f"echo {i} | ./NicholsGen.run > ./testCases/Nichols{i}.in")
-
-make_tests()
-
 runners: list[tuple[str, str]] = [
   ("Buch", "./../../mains/base_Buchberger.run"),
   #("F4", "./../../mains/base_F4.run"),
@@ -36,9 +24,14 @@ runners: list[tuple[str, str]] = [
 ]
 
 bases_comparator: str = "./../../mains/compare_bases.run"
+testCasesFolder = "../commonTestCases/testCases"
+outputFolder = "./output"
+
+os.system(f"rm -rf {outputFolder}")
+os.system(f"mkdir -p {outputFolder}")
 
 # test files
-inputs: list[str] = [f for f in os.listdir("./testCases") if f.endswith('.in')]
+inputs: list[str] = [f for f in os.listdir(testCasesFolder) if f.endswith('.in')]
 inputs.sort()
 
 # Run the program and return the time it took
@@ -47,7 +40,7 @@ def run_program(index: int, test: int) -> float:
   in_file = inputs[test]
   out_file = in_file.replace('.in', '_') + name + ".out"
   start_time = time.time()
-  os.system(f"{runner} < ./testCases/{inputs[test]} > ./testCases/{out_file}")
+  os.system(f"{runner} < {testCasesFolder}/{inputs[test]} > {outputFolder}/{out_file}")
   end_time = time.time()
   return end_time - start_time
 
@@ -68,9 +61,9 @@ for i in range(len(inputs)):
     name, runner = runners[j]
     out_file = in_file.replace('.in', '_') + name + ".out"
 
-    os.system(f"{bases_comparator} ./testCases/{out_file0} ./testCases/{out_file} > ./testCases/compare_bases.out")
+    os.system(f"{bases_comparator} {outputFolder}/{out_file0} {outputFolder}/{out_file} > {outputFolder}/compare_bases.out")
 
-    if open("./testCases/compare_bases.out", "r").read().strip() != "Equivalent":
+    if open(f"{outputFolder}/compare_bases.out", "r").read().strip() != "Equivalent":
       print(f"Test {in_file} failed, {name0} and {name} gave different results")
       sys.exit(1)
 

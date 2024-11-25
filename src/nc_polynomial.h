@@ -4,6 +4,7 @@ using namespace std;
 
 #include "nc_monomial.h"
 
+/* Struct for representing non commutative polynomials */
 template<typename K, class ord = DegLexOrd>
 struct Poly {
   vector<pair<Monomial, K>> terms;
@@ -346,3 +347,23 @@ struct PolyOrd {
     return p1.terms.size() < p2.terms.size();
   }
 };
+
+/* For each x in the monomials of p replace x by news[x] */
+template<typename K, class ord = DegLexOrd>
+Poly<K, ord> replace(const Monomial& m, const vector<Poly<K, ord>>& news) {
+  Poly<K, ord> res(Monomial(), K(1));
+  for (auto x : m.vals) {
+    res *= news[x];
+  }
+  return res;
+}
+
+/* For each x in the monomials of p replace x by news[x] */
+template<typename K, class ord = DegLexOrd>
+Poly<K, ord> replace(const Poly<K, ord>& p, const vector<Poly<K, ord>>& news) {
+  Poly<K, ord> res;
+  for (const auto& [m, c] : p.terms) {
+    res += replace(m, news) * c;
+  }
+  return res;
+}

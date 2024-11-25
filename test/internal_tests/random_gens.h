@@ -6,11 +6,11 @@ using namespace std;
 
 typedef Monomial::X X;
 
-Monomial random_monomial() {
-  uint n = rand() % 10;
+Monomial random_monomial(size_t x_max = 5, size_t n_max = 10) {
+  uint n = rand() % n_max;
   vector<X> vals0(n);
   for (X& x : vals0) {
-    x = rand() % 5;
+    x = rand() % x_max;
   }
   return Monomial(vals0);
 }
@@ -24,11 +24,11 @@ mpq_class random_rational() {
   return r;
 }
 
-P random_poly() {
-  uint n = rand() % 10;
+P random_poly(size_t x_max = 5, size_t n_max = 10, size_t mon_max = 10) {
+  uint n = rand() % n_max;
   P p;
   for (uint i = 0; i < n; i++) {
-    Monomial m = random_monomial();
+    Monomial m = random_monomial(x_max, mon_max);
     mpq_class r = random_rational();
     p += P(m, r);
   }
