@@ -38,6 +38,7 @@ vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const 
             T.insert(it->first);
           }
         }
+        break;
       }
     }
   }
@@ -170,7 +171,7 @@ struct F4Incremental {
     G = simplify(GG);
 
     for (size_t j = 0; j < G.size(); j++) {
-      for (size_t i = 0; i < G.size(); i++) {
+      for (size_t i = 0; i <= j; i++) {
         vector<Amb> ambs_ij = ambiguities(G[i].lm(), G[j].lm());
         for (auto& amb : ambs_ij) {
           add_amb(amb, i, j);
@@ -210,13 +211,17 @@ struct F4Incremental {
 
       bool added = false;
       for (Poly<K, ord>& f : P_reduced) {
+        reduce(f, G);
+        if (f.isZero()) {
+          continue;
+        }
         for (size_t i = 0; i < G.size(); i++) {
           vector<Amb> ambs_if = ambiguities(G[i].lm(), f.lm());
           for (auto& amb : ambs_if) {
             add_amb(amb, i, G.size());
           }
           vector<Amb> ambs_fi = ambiguities(f.lm(), G[i].lm());
-          for (auto& amb : ambs_if) {
+          for (auto& amb : ambs_fi) {
             add_amb(amb, G.size(), i);
           }
         }

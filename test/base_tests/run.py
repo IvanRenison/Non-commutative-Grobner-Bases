@@ -19,7 +19,7 @@ os.system = my_os_system
 
 runners: list[tuple[str, str]] = [
   ("Buch", "./../../mains/base_Buchberger.run"),
-  #("F4", "./../../mains/base_F4.run"),
+  ("F4", "./../../mains/base_F4.run"),
   ("GB", "python ./base_operator_gb.py")
 ]
 
