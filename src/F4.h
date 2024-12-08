@@ -167,22 +167,22 @@ struct F4Incremental {
     ambs_per_deg[d].push_back({move(amb), i, j});
   }
 
-  F4Incremental(const vector<Poly<K, ord>>& GG) {
-    G = simplify(GG);
-
-    for (size_t j = 0; j < G.size(); j++) {
-      for (size_t i = 0; i <= j; i++) {
-        vector<Amb> ambs_ij = ambiguities(G[i].lm(), G[j].lm());
-        for (auto& amb : ambs_ij) {
-          add_amb(amb, i, j);
-        }
-        if (i != j) {
-          vector<Amb> ambs_ji = ambiguities(G[j].lm(), G[i].lm());
-          for (auto& amb : ambs_ji) {
-            add_amb(amb, j, i);
-          }
-        }
+  void add_poly(Poly<K, ord>& f) {
+    for (size_t k = 0; k < G.size(); k++) {
+      for (auto& amb : ambiguities(G[k].lm(), f.lm())) {
+        add_amb(amb, k, G.size());
       }
+      for (auto& amb : ambiguities(f.lm(), G[k].lm())) {
+        add_amb(amb, G.size(), k);
+      }
+    }
+    G.push_back(move(f));
+  }
+
+  F4Incremental(const vector<Poly<K, ord>>& GG) {
+    vector<Poly<K, ord>> GG2 = simplify(GG);
+    for (size_t i = 0; i < GG2.size(); i++) {
+      add_poly(GG2[i]);
     }
   }
 
@@ -212,22 +212,10 @@ struct F4Incremental {
       bool added = false;
       for (Poly<K, ord>& f : P_reduced) {
         reduce(f, G);
-        if (f.isZero()) {
-          continue;
+        if (!f.isZero()) {
+          add_poly(f);
+          added = true;
         }
-        for (size_t i = 0; i < G.size(); i++) {
-          vector<Amb> ambs_if = ambiguities(G[i].lm(), f.lm());
-          for (auto& amb : ambs_if) {
-            add_amb(amb, i, G.size());
-          }
-          vector<Amb> ambs_fi = ambiguities(f.lm(), G[i].lm());
-          for (auto& amb : ambs_fi) {
-            add_amb(amb, G.size(), i);
-          }
-        }
-
-        G.push_back(move(f));
-        added = true;
       }
 
       if (added) {
