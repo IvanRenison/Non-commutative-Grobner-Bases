@@ -18,10 +18,10 @@ int main() {
 
   F4Incremental<R> F4(G);
 
-  while (!F4.next().empty()) {}
+  vector<P> base = F4.fullBase();
 
-  cout << F4.G.size() << endl;
-  for (auto f : F4.G) {
+  cout << base.size() << endl;
+  for (auto f : base) {
     f.nice_print();
   }
 }

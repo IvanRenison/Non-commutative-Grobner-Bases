@@ -225,6 +225,11 @@ struct F4Incremental {
 
     return {};
   }
+
+  vector<Poly<K, ord>> fullBase() {
+    while (!next().empty()) {}
+    return G;
+  }
 };
 
 enum IdealMembershipStatus {
