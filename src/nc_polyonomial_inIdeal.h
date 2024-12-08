@@ -101,19 +101,3 @@ InIdealPoly<K, ord> operator*(const Monomial& m, const InIdealPoly<K, ord>& p) {
     }
     return res;
 }
-
-/* template<typename K, class ord = DegLexOrd>
-InIdealPoly<K, ord> replace(const InIdealPoly<K, ord>& f, size_t i, const InIdealPoly<K, ord>& g) {
-  InIdealPoly<K, ord> res;
-  for (const auto& [m0, j, m1, c] : f.terms) {
-    if (j == i) {
-      for (const auto& [mg0, jg, mg1, cg] : g.terms) {
-        res.add(m0 * mg0, jg, mg1 * m1, c * cg);
-      }
-    } else {
-      res.add(m0, j, m1, c);
-    }
-  }
-  return res;
-}
- */

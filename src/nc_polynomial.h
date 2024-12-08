@@ -33,25 +33,6 @@ struct Poly {
     }
   }
 
-  static Poly constructor(vector<pair<Monomial, K>>& p) {
-    sort(p.begin(), p.end(), [&](const auto& a, const auto& b) {
-      return ord()(a.first, b.first);
-    });
-    Poly res;
-    // Convine repeated terms
-    for (size_t i = 0; i < p.size(); i++) {
-      if (!res.terms.empty() && p[i].first == res.terms.back().first) {
-        res.terms.back().second += p[i].second;
-        if (res.terms.back().second == K(0)) {
-          res.terms.pop_back();
-        }
-      } else {
-        res.terms.push_back(move(p[i]));
-      }
-    }
-    return res;
-  }
-
   bool operator==(const Poly& p) const {
     return terms == p.terms;
   }
@@ -119,7 +100,7 @@ struct Poly {
         res.push_back({m1 * m2, c1 * c2});
       }
     }
-    return constructor(res);
+    return Poly(res);
   }
   Poly operator*(Monomial m) const {
     Poly res = *this;
@@ -266,7 +247,7 @@ struct Poly {
       is >> c >> mon;
       terms[i] = {mon, c};
     }
-    p = Poly::constructor(terms);
+    p = Poly(terms);
     return is;
   }
 
@@ -308,7 +289,7 @@ struct Poly {
       if (next_neg) c = -c;
       next_neg = false;
       while (is.peek() == ' ') is.ignore();
-      if (!isalpha(is.peek())) {  // Empty monomial
+      if (!isalpha(is.peek())) { // Empty monomial
         terms.push_back({Monomial(), c});
       } else {
         Monomial m = Monomial::nice_read(is);
@@ -320,7 +301,7 @@ struct Poly {
       is.ignore();
     }
     if (is.peek() == '\n') is.ignore();
-    return Poly::constructor(terms);;
+    return Poly(terms);;
   }
 };
 
