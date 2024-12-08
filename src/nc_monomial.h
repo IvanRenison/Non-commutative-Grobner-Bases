@@ -144,12 +144,6 @@ struct Monomial {
   }
 };
 
-struct LexOrd {
-  bool operator()(const Monomial& a, const Monomial& b) const {
-    return a.vals < b.vals;
-  }
-};
-
 struct DegLexOrd {
   bool operator()(const Monomial& a, const Monomial& b) const {
     size_t n = a.vals.size(), m = b.vals.size();
