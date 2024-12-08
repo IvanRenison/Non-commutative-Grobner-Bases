@@ -33,6 +33,7 @@ struct Poly {
     }
   }
 
+private:
   static Poly constructor(vector<pair<Monomial, K>>& p) {
     sort(p.begin(), p.end(), [&](const auto& a, const auto& b) {
       return ord()(a.first, b.first);
@@ -51,6 +52,7 @@ struct Poly {
     }
     return res;
   }
+public:
 
   bool operator==(const Poly& p) const {
     return terms == p.terms;
@@ -308,7 +310,7 @@ struct Poly {
       if (next_neg) c = -c;
       next_neg = false;
       while (is.peek() == ' ') is.ignore();
-      if (!isalpha(is.peek())) {  // Empty monomial
+      if (!isalpha(is.peek())) { // Empty monomial
         terms.push_back({Monomial(), c});
       } else {
         Monomial m = Monomial::nice_read(is);
@@ -347,23 +349,3 @@ struct PolyOrd {
     return p1.terms.size() < p2.terms.size();
   }
 };
-
-/* For each x in the monomials of p replace x by news[x] */
-template<typename K, class ord = DegLexOrd>
-Poly<K, ord> replace(const Monomial& m, const vector<Poly<K, ord>>& news) {
-  Poly<K, ord> res(Monomial(), K(1));
-  for (auto x : m.vals) {
-    res *= news[x];
-  }
-  return res;
-}
-
-/* For each x in the monomials of p replace x by news[x] */
-template<typename K, class ord = DegLexOrd>
-Poly<K, ord> replace(const Poly<K, ord>& p, const vector<Poly<K, ord>>& news) {
-  Poly<K, ord> res;
-  for (const auto& [m, c] : p.terms) {
-    res += replace(m, news) * c;
-  }
-  return res;
-}

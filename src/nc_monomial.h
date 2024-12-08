@@ -150,12 +150,3 @@ struct DegLexOrd {
     return n < m || (n == m && a.vals < b.vals);
   }
 };
-
-/* For each x in m replace x by news[x] */
-Monomial replace(const Monomial& m, const vector<Monomial>& news) {
-  Monomial res;
-  for (auto x : m.vals) {
-    res *= news[x];
-  }
-  return res;
-}
