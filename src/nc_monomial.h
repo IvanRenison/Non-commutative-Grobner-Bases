@@ -6,7 +6,7 @@ using namespace std;
 
 /* Struct for representing non commutative monomials */
 struct Monomial {
-  typedef unsigned short X;
+  typedef __uint8_t X;
 
   vector<X> vals;
 
@@ -110,7 +110,7 @@ struct Monomial {
   friend ostream& operator<<(ostream& os, const Monomial& m) {
     os << m.size();
     for (auto x : m.vals) {
-      os << ' ' << x;
+      os << ' ' << (unsigned int)x;
     }
     return os;
   }
@@ -119,7 +119,9 @@ struct Monomial {
     is >> n;
     m.vals.resize(n);
     for (auto& x : m.vals) {
-      is >> x;
+      unsigned int xx;
+      is >> xx;
+      x = xx;
     }
     return is;
   }
