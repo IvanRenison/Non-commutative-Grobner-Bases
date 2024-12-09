@@ -18,7 +18,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common libflint-dev
+        sudo apt-get install libgivaro-dev libflint-dev
     - name: Run test
       run:
         make internal_tests
@@ -33,7 +33,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common libflint-dev sagemath
+        sudo apt-get install libgivaro-dev libflint-dev sagemath
         python3 -m pip install pyahocorasick
         python3 -m pip install git+https://github.com/ClemensHofstadler/operator_gb.git
     - name: Run test
@@ -50,7 +50,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install libgivaro-dev liblinbox-dev fflas-ffpack fflas-ffpack-dev-doc fflas-ffpack-common libflint-dev sagemath
+        sudo apt-get install libgivaro-dev libflint-dev sagemath
         python3 -m pip install pyahocorasick
         python3 -m pip install git+https://github.com/ClemensHofstadler/operator_gb.git
     - name: Run test
