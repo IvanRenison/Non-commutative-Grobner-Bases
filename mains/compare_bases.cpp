@@ -2,7 +2,7 @@
 #include <gmpxx.h>
 using namespace std;
 
-#include "cmpBases.h"
+#include "nc_gb/cmpBases.h"
 
 typedef mpq_class R;
 typedef Poly<R> P;

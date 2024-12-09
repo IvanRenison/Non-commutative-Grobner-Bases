@@ -2,8 +2,8 @@
 #include <omp.h>
 using namespace std;
 
-#include "F4.h"
-#include "../extras/ModularArithmetic.h"
+#include "nc_gb/F4.h"
+#include "extras/ModularArithmetic.h"
 
 const size_t mod = 1e9 + 7;
 typedef Mod<mod> Zp;

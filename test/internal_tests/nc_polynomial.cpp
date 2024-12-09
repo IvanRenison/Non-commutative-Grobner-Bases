@@ -2,7 +2,7 @@
 #include <gmpxx.h>
 using namespace std;
 
-#include "nc_polynomial.h"
+#include "nc_gb/nc_polynomial.h"
 #include "random_gens.h"
 
 typedef Poly<mpq_class> P;

@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "Buchberger.h"
+#include "nc_gb/Buchberger.h"
 #include "random_gens.h"
 
 typedef Poly<mpq_class> P;

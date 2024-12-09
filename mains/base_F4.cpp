@@ -3,7 +3,7 @@
 #include <omp.h>
 using namespace std;
 
-#include "F4.h"
+#include "nc_gb/F4.h"
 
 typedef mpq_class R;
 typedef Poly<R> P;

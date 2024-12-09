@@ -2,8 +2,8 @@
 #include <gmpxx.h>
 using namespace std;
 
-#include "Buchberger.h"
-#include "cmpBases.h"
+#include "nc_gb/Buchberger.h"
+#include "nc_gb/cmpBases.h"
 
 typedef mpq_class R;
 typedef Poly<R> P;

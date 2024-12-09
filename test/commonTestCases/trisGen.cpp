@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "nc_polynomial.h"
+#include "nc_gb/nc_polynomial.h"
 
 vector<vector<string>> tris = {
   {"aa", "bbb", "abababbabbabababbabb"}, // tri1

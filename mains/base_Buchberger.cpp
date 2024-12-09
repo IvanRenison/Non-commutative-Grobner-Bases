@@ -2,7 +2,7 @@
 #include <gmpxx.h>
 using namespace std;
 
-#include "Buchberger.h"
+#include "nc_gb/Buchberger.h"
 
 typedef mpq_class R;
 typedef Poly<R> P;

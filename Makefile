@@ -2,7 +2,7 @@
 
 COMP=g++ -Wall -Wextra -std=c++20 -O2
 LIBS=-lgivaro -lgmp -lgmpxx -lflint -fopenmp
-INCLUDE=-I./src
+INCLUDE=-I.
 
 HEADER_FILES := $(shell find . -name "*.h")
 MAIN_FILES := $(wildcard mains/*.cpp)
