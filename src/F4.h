@@ -10,22 +10,23 @@ template<typename K, class ord = DegLexOrd>
 vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const vector<Poly<K, ord>>& P) {
   vector<Poly<K, ord>> res;
 
-  set<Monomial, ord> T, done;
+  set<Monomial, ord> considered;
+  vector<Monomial> T;
 
   for (const auto& f : P) {
     if (!f.isZero()) {
       auto it = f.terms.rbegin();
-      done.insert(it->first);
+      considered.insert(it->first);
       for (it++; it != f.terms.rend(); it++) {
-        T.insert(it->first);
+        T.push_back(it->first);
+        considered.insert(it->first);
       }
     }
   }
 
   while (!T.empty()) {
-    Monomial t = *T.begin();
-    T.erase(T.begin());
-    done.insert(t);
+    Monomial t = move(T.back());
+    T.pop_back();
 
     for (const auto& g : G) {
       vector<pair<Monomial, Monomial>> div = g.lm().divide(t);
@@ -34,8 +35,9 @@ vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const 
         res.push_back(h);
         auto it = h.terms.rbegin();
         for (it++; it != h.terms.rend(); it++) {
-          if (!done.count(it->first)) {
-            T.insert(it->first);
+          if (!considered.count(it->first)) {
+            T.push_back(it->first);
+            considered.insert(it->first);
           }
         }
         break;
