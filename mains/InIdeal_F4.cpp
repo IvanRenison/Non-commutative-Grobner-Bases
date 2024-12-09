@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
-
+#include <omp.h>
 using namespace std;
 
 #include "matrix_mpq_class.h"
@@ -9,6 +9,8 @@ using namespace std;
 typedef Poly<mpq_class> P;
 
 int main() {
+
+  omp_set_num_threads(8);
 
   size_t n;
   cin >> n;

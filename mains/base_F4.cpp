@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
+#include <omp.h>
 using namespace std;
 
 #include "F4.h"
@@ -8,6 +9,7 @@ typedef mpq_class R;
 typedef Poly<R> P;
 
 int main() {
+  omp_set_num_threads(8);
 
   size_t n;
   cin >> n;

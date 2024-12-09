@@ -158,27 +158,49 @@ struct F4Incremental {
   vector<vector<tuple<Amb, size_t, size_t>>> ambs_per_deg;
   // We store ambiguities by their degree
 
-  void add_amb(Amb& amb, size_t i, size_t j) { // i and j are the indices of the polynomials in G
+/*   void add_amb(Amb& amb, size_t i, size_t j) { // i and j are the indices of the polynomials in G
     if (checkDeletionCriteria(G, amb, i, j)) {
       return;
     }
-    size_t d = amb.size();
-    while (ambs_per_deg.size() <= d) {
-      ambs_per_deg.push_back({});
+
+    #pragma omp critical
+    {
+      size_t d = amb.size();
+      while (ambs_per_deg.size() <= d) {
+        ambs_per_deg.push_back({});
+      }
+      ambs_per_deg[d].push_back({move(amb), i, j});
     }
-    ambs_per_deg[d].push_back({move(amb), i, j});
-  }
+  } */
 
   void add_poly(Poly<K, ord>& f) {
-    for (size_t k = 0; k < G.size(); k++) {
-      for (auto& amb : ambiguities(G[k].lm(), f.lm())) {
-        add_amb(amb, k, G.size());
+    G.push_back(move(f));
+    size_t lim = G.size() - 1;
+    vector<vector<tuple<Amb, size_t, size_t>>> to_add(lim);
+
+    #pragma omp parallel for
+    for (size_t k = 0; k < lim; k++) {
+      for (auto& amb : ambiguities(G[k].lm(), G.back().lm())) {
+        if (!checkDeletionCriteria(G, amb, k, lim)) {
+          to_add[k].push_back({move(amb), k, lim});
+        }
       }
-      for (auto& amb : ambiguities(f.lm(), G[k].lm())) {
-        add_amb(amb, G.size(), k);
+      for (auto& amb : ambiguities(G.back().lm(), G[k].lm())) {
+        if (!checkDeletionCriteria(G, amb, lim, k)) {
+          to_add[k].push_back({move(amb), lim, k});
+        }
       }
     }
-    G.push_back(move(f));
+
+    for (size_t k = 0; k < lim; k++) {
+      for (auto& [amb, i, j] : to_add[k]) {
+        size_t d = amb.size();
+        while (ambs_per_deg.size() <= d) {
+          ambs_per_deg.push_back({});
+        }
+        ambs_per_deg[d].push_back({move(amb), i, j});
+      }
+    }
   }
 
   F4Incremental(const vector<Poly<K, ord>>& GG) {

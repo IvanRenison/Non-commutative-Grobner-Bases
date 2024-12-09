@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <omp.h>
 using namespace std;
 
 #include "F4.h"
@@ -10,6 +11,7 @@ typedef Mod<mod> Zp;
 typedef Poly<Zp> P;
 
 int main() {
+  omp_set_num_threads(8);
 
   size_t n;
   cin >> n;
