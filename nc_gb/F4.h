@@ -1,17 +1,18 @@
 #pragma once
 #include <bits/stdc++.h>
-using namespace std;
 
 #include "ambiguities.h"
 #include "matrix.h"
 #include "reductions.h"
 
-template<typename K, class ord = DegLexOrd>
-vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const vector<Poly<K, ord>>& P) {
-  vector<Poly<K, ord>> res;
+namespace nc_gb {
 
-  set<Monomial, ord> considered;
-  vector<Monomial> T;
+template<typename K, class ord = DegLexOrd>
+std::vector<Poly<K, ord>> symbolicPreprocessing(const std::vector<Poly<K, ord>>& G, const std::vector<Poly<K, ord>>& P) {
+  std::vector<Poly<K, ord>> res;
+
+  std::set<Monomial, ord> considered;
+  std::vector<Monomial> T;
 
   for (const auto& f : P) {
     if (!f.isZero()) {
@@ -25,11 +26,11 @@ vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const 
   }
 
   while (!T.empty()) {
-    Monomial t = move(T.back());
+    Monomial t = std::move(T.back());
     T.pop_back();
 
     for (const auto& g : G) {
-      vector<pair<Monomial, Monomial>> div = g.lm().divide(t);
+      std::vector<std::pair<Monomial, Monomial>> div = g.lm().divide(t);
       if (!div.empty()) {
         Poly<K, ord> h = div[0].first * g * div[0].second;
         res.push_back(h);
@@ -50,8 +51,8 @@ vector<Poly<K, ord>> symbolicPreprocessing(const vector<Poly<K, ord>>& G, const 
 
 
 template<typename K, class ord = DegLexOrd>
-pair<Matrix<K>, map<Monomial, size_t, ord>> toMatrix(const vector<Poly<K, ord>>& G) {
-  vector<Monomial> T;
+std::pair<Matrix<K>, std::map<Monomial, size_t, ord>> toMatrix(const std::vector<Poly<K, ord>>& G) {
+  std::vector<Monomial> T;
   for (const auto& f : G) {
     for (const auto& [m, c] : f.terms) {
       T.push_back(m);
@@ -60,7 +61,7 @@ pair<Matrix<K>, map<Monomial, size_t, ord>> toMatrix(const vector<Poly<K, ord>>&
 
   sort(T.begin(), T.end(), ord());
 
-  map<Monomial, size_t, ord> ids;
+  std::map<Monomial, size_t, ord> ids;
 
   for (size_t i = T.size(); i--; ) {
     if (i + 1 == T.size() || T[i] != T[i + 1]) {
@@ -70,7 +71,7 @@ pair<Matrix<K>, map<Monomial, size_t, ord>> toMatrix(const vector<Poly<K, ord>>&
 
   size_t n = G.size(), m = ids.size();
 
-  Matrix<K> A(n, vector<K>(m));
+  Matrix<K> A(n, std::vector<K>(m));
 
   for (size_t i = 0; i < n; i++) {
     for (const auto& [m, c] : G[i].terms) {
@@ -82,8 +83,8 @@ pair<Matrix<K>, map<Monomial, size_t, ord>> toMatrix(const vector<Poly<K, ord>>&
 }
 
 template<typename K, class ord = DegLexOrd>
-vector<Poly<K, ord>> multiReduction(const vector<Poly<K, ord>>& G, const vector<Poly<K, ord>>& P) {
-  vector<Poly<K, ord>> GG = symbolicPreprocessing(G, P);
+std::vector<Poly<K, ord>> multiReduction(const std::vector<Poly<K, ord>>& G, const std::vector<Poly<K, ord>>& P) {
+  std::vector<Poly<K, ord>> GG = symbolicPreprocessing(G, P);
 
   for (const auto& f : P) {
     GG.push_back(f);
@@ -92,17 +93,17 @@ vector<Poly<K, ord>> multiReduction(const vector<Poly<K, ord>>& G, const vector<
   auto [A, ids] = toMatrix(GG);
   rref(A);
 
-  vector<Monomial> ids_inv(ids.size());
+  std::vector<Monomial> ids_inv(ids.size());
   for (const auto& [m, i] : ids) {
     ids_inv[i] = m;
   }
 
-  vector<bool> GG_lms(ids.size(), false);
+  std::vector<bool> GG_lms(ids.size(), false);
   for (const auto& f : GG) {
     GG_lms[ids[f.lm()]] = true;
   }
 
-  vector<Poly<K, ord>> res;
+  std::vector<Poly<K, ord>> res;
 
   for (size_t i = 0; i < GG.size(); i++) {
     size_t j = 0;
@@ -124,18 +125,18 @@ vector<Poly<K, ord>> multiReduction(const vector<Poly<K, ord>>& G, const vector<
 }
 
 template<typename K, class ord = DegLexOrd>
-vector<Poly<K, ord>> simplify(const vector<Poly<K, ord>>& G) {
+std::vector<Poly<K, ord>> simplify(const std::vector<Poly<K, ord>>& G) {
   size_t n = G.size();
 
   auto [A, ids] = toMatrix(G);
   rref(A);
 
-  vector<Monomial> ids_inv(ids.size());
+  std::vector<Monomial> ids_inv(ids.size());
   for (const auto& [m, i] : ids) {
     ids_inv[i] = m;
   }
 
-  vector<Poly<K, ord>> res;
+  std::vector<Poly<K, ord>> res;
   for (size_t i = 0; i < n; i++) {
     Poly<K, ord> f;
     for (size_t j = 0; j < ids.size(); j++) {
@@ -154,8 +155,8 @@ vector<Poly<K, ord>> simplify(const vector<Poly<K, ord>>& G) {
 template<typename K, class ord = DegLexOrd>
 struct F4Incremental {
 
-  vector<Poly<K, ord>> G;
-  vector<vector<tuple<Amb, size_t, size_t>>> ambs_per_deg;
+  std::vector<Poly<K, ord>> G;
+  std::vector<std::vector<std::tuple<Amb, size_t, size_t>>> ambs_per_deg;
   // We store ambiguities by their degree
 
 /*   void add_amb(Amb& amb, size_t i, size_t j) { // i and j are the indices of the polynomials in G
@@ -169,25 +170,25 @@ struct F4Incremental {
       while (ambs_per_deg.size() <= d) {
         ambs_per_deg.push_back({});
       }
-      ambs_per_deg[d].push_back({move(amb), i, j});
+      ambs_per_deg[d].push_back({std::move(amb), i, j});
     }
   } */
 
   void add_poly(Poly<K, ord>& f) {
-    G.push_back(move(f));
+    G.push_back(std::move(f));
     size_t lim = G.size() - 1;
-    vector<vector<tuple<Amb, size_t, size_t>>> to_add(lim);
+    std::vector<std::vector<std::tuple<Amb, size_t, size_t>>> to_add(lim);
 
     #pragma omp parallel for
     for (size_t k = 0; k < lim; k++) {
       for (auto& amb : ambiguities(G[k].lm(), G.back().lm())) {
         if (!checkDeletionCriteria(G, amb, k, lim)) {
-          to_add[k].push_back({move(amb), k, lim});
+          to_add[k].push_back({std::move(amb), k, lim});
         }
       }
       for (auto& amb : ambiguities(G.back().lm(), G[k].lm())) {
         if (!checkDeletionCriteria(G, amb, lim, k)) {
-          to_add[k].push_back({move(amb), lim, k});
+          to_add[k].push_back({std::move(amb), lim, k});
         }
       }
     }
@@ -198,19 +199,19 @@ struct F4Incremental {
         while (ambs_per_deg.size() <= d) {
           ambs_per_deg.push_back({});
         }
-        ambs_per_deg[d].push_back({move(amb), i, j});
+        ambs_per_deg[d].push_back({std::move(amb), i, j});
       }
     }
   }
 
-  F4Incremental(const vector<Poly<K, ord>>& GG) {
-    vector<Poly<K, ord>> GG2 = simplify(GG);
+  F4Incremental(const std::vector<Poly<K, ord>>& GG) {
+    std::vector<Poly<K, ord>> GG2 = simplify(GG);
     for (size_t i = 0; i < GG2.size(); i++) {
       add_poly(GG2[i]);
     }
   }
 
-  vector<Poly<K, ord>> next() {
+  std::vector<Poly<K, ord>> next() {
     for (size_t k = 0; k < ambs_per_deg.size(); k++) {
       if (ambs_per_deg[k].empty()) {
         continue;
@@ -218,7 +219,7 @@ struct F4Incremental {
 
       size_t n = G.size();
 
-      vector<Poly<K, ord>> P;
+      std::vector<Poly<K, ord>> P;
       for (auto& [amb, i, j] : ambs_per_deg[k]) {
         if (amb.type == Amb::Inclusion) {
           P.push_back(amb.a * G[j] * amb.b);
@@ -231,7 +232,7 @@ struct F4Incremental {
 
       ambs_per_deg[k].clear();
 
-      vector<Poly<K, ord>> P_reduced = multiReduction(G, P);
+      std::vector<Poly<K, ord>> P_reduced = multiReduction(G, P);
 
       bool added = false;
       for (Poly<K, ord>& f : P_reduced) {
@@ -250,7 +251,7 @@ struct F4Incremental {
     return {};
   }
 
-  vector<Poly<K, ord>> fullBase() {
+  std::vector<Poly<K, ord>> fullBase() {
     while (!next().empty()) {}
     return G;
   }
@@ -263,7 +264,7 @@ enum IdealMembershipStatus {
 };
 
 template<typename K, class ord = DegLexOrd>
-IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
+IdealMembershipStatus inIdeal_F4(const std::vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
   F4Incremental bi(G);
 
   for (size_t i = G.size(); i < max_sz;) {
@@ -271,7 +272,7 @@ IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, 
     if (f.isZero()) {
       return InIdeal;
     }
-    vector<Poly<K, ord>> p = bi.next();
+    std::vector<Poly<K, ord>> p = bi.next();
     if (p.empty()) {
       return NotInIdeal;
     }
@@ -281,3 +282,4 @@ IdealMembershipStatus inIdeal_F4(const vector<Poly<K, ord>>& G, Poly<K, ord> f, 
   return Unknown;
 }
 
+} // namespace nc_gb

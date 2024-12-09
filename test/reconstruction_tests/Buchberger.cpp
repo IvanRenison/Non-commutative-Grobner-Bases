@@ -1,9 +1,11 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
-using namespace std;
 
 #include "nc_gb/Buchberger.h"
 #include "nc_gb/cmpBases.h"
+
+using namespace std;
+using namespace nc_gb;
 
 typedef mpq_class R;
 typedef Poly<R> P;

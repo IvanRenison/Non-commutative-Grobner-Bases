@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #include "nc_gb/Buchberger.h"
 #include "extras/ModularArithmetic.h"
+
+using namespace std;
+using namespace nc_gb;
 
 const size_t mod = 1e9 + 7;
 typedef Mod<mod> Zp;

@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #include "nc_gb/reductions.h"
 #include "random_gens.h"
+
+using namespace std;
+using namespace nc_gb;
 
 typedef Poly<mpq_class> P;
 typedef Monomial::X X;

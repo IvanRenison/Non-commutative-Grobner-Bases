@@ -1,8 +1,8 @@
 #pragma once
 #include <bits/stdc++.h>
-using namespace std;
 
 #include "nc_polynomial.h"
+namespace nc_gb {
 
 struct Amb {
   const Monomial& p, q;
@@ -28,26 +28,26 @@ struct Amb {
   }
 };
 
-vector<Amb>
+std::vector<Amb>
 ambiguities(const Monomial& p, const Monomial& q) {
-  vector<Amb> res;
+  std::vector<Amb> res;
 
   size_t n = p.size(), m = q.size();
 
   // Inclusion of q inside p
-  vector<size_t> div_idxs = q.divide_indexes(p);
+  std::vector<size_t> div_idxs = q.divide_indexes(p);
   for (size_t i : div_idxs) {
     Amb amb = {
       p, q,
       Amb::Inclusion,
       i,
-      Monomial(vector(p.vals.begin(), p.vals.begin() + i)),
-      Monomial(vector(p.vals.begin() + i + q.size(), p.vals.end()))
+      Monomial(std::vector(p.vals.begin(), p.vals.begin() + i)),
+      Monomial(std::vector(p.vals.begin() + i + q.size(), p.vals.end()))
     };
-    res.push_back(move(amb));
+    res.push_back(std::move(amb));
   }
 
-  vector<size_t> z = Z(q.vals, p.vals);
+  std::vector<size_t> z = Z(q.vals, p.vals);
 
   // Overlap p q
   for (size_t i = n >= m ? n - m + 1 : 1; i < n; i++) {
@@ -61,11 +61,11 @@ ambiguities(const Monomial& p, const Monomial& q) {
       p, q,
       Amb::Overlap,
       i,
-      Monomial(vector(p.vals.begin(), p.vals.begin() + i)),
-      Monomial(vector(q.vals.begin() + (n - i), q.vals.end()))
+      Monomial(std::vector(p.vals.begin(), p.vals.begin() + i)),
+      Monomial(std::vector(q.vals.begin() + (n - i), q.vals.end()))
     };
 
-    res.push_back(move(amb));
+    res.push_back(std::move(amb));
   }
 
   return res;
@@ -93,12 +93,12 @@ bool checkSpecificsDeletionCriteria(const Amb& amb, const Monomial& o) {
     }
   } else {
     if (o.divides(amb.a) && o.divides(amb.b)) {
-      Monomial m(vector(amb.p.vals.begin() + amb.pos, amb.p.vals.end()));
+      Monomial m(std::vector(amb.p.vals.begin() + amb.pos, amb.p.vals.end()));
       if (o.divides(m)){
         return true;
       }
     }
-    vector<pair<Monomial, Monomial>> divs = o.divide(amb.lm());
+    std::vector<std::pair<Monomial, Monomial>> divs = o.divide(amb.lm());
     for (auto& [L, R] : divs) {
       if (L.empty() && R.size() < amb.b.size()){
         return true;
@@ -116,12 +116,12 @@ bool checkSpecificsDeletionCriteria(const Amb& amb, const Monomial& o) {
 
 /* Returns true if amb does not have to be added */
 template<typename K, class ord = DegLexOrd>
-bool checkDeletionCriteria(vector<Poly<K, ord>>& G, Amb& amb, size_t i, size_t j) {
+bool checkDeletionCriteria(std::vector<Poly<K, ord>>& G, Amb& amb, size_t i, size_t j) {
   if (i == j && amb.type == Amb::Inclusion) {
     return true;
   }
   size_t k = 0;
-  for (; k < min(i, j); k++) {
+  for (; k < std::min(i, j); k++) {
     if (checkGeneralDeletionCriteria(amb, G[k].lm())) {
       return true;
     }
@@ -141,3 +141,4 @@ bool checkDeletionCriteria(vector<Poly<K, ord>>& G, Amb& amb, size_t i, size_t j
   return false;
 }
 
+} // namespace nc_gb

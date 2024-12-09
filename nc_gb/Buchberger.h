@@ -1,9 +1,10 @@
 #pragma once
 #include <bits/stdc++.h>
-using namespace std;
 
 #include "ambiguities.h"
 #include "reductions.h"
+
+namespace nc_gb {
 
 template<typename K, class ord = DegLexOrd>
 Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
@@ -16,12 +17,12 @@ Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g
 
 template<typename K, class ord = DegLexOrd>
 struct BuchbergerIncremental {
-  vector<Poly<K, ord>> G;
-  vector<bool> removed;
-  deque<tuple<Amb, size_t, size_t>> ambs;
+  std::vector<Poly<K, ord>> G;
+  std::vector<bool> removed;
+  std::deque<std::tuple<Amb, size_t, size_t>> ambs;
   size_t t = 0;
 
-  BuchbergerIncremental(vector<Poly<K, ord>> GG) {
+  BuchbergerIncremental(std::vector<Poly<K, ord>> GG) {
     for (size_t i = 0; i < GG.size(); i++) {
       add_poly(GG[i]);
     }
@@ -32,7 +33,7 @@ struct BuchbergerIncremental {
       return;
     }
 
-    ambs.push_back({move(amb), i, j});
+    ambs.push_back({std::move(amb), i, j});
   }
 
   void add_poly(const Poly<K, ord>& f) {
@@ -48,14 +49,14 @@ struct BuchbergerIncremental {
     }
   }
 
-  optional<Poly<K, ord>> next() {
+  std::optional<Poly<K, ord>> next() {
     if (t < G.size()) {
       Poly<K, ord> res = G[t];
       t++;
       return res;
     }
     while (!ambs.empty()) {
-      auto [amb, i, j] = move(ambs.front());
+      auto [amb, i, j] = std::move(ambs.front());
       ambs.pop_front();
 
       Poly<K, ord> s = S_poly(amb, G[i], G[j]);
@@ -76,9 +77,9 @@ struct BuchbergerIncremental {
     return {};
   }
 
-  vector<Poly<K, ord>> fullBase() {
+  std::vector<Poly<K, ord>> fullBase() {
     while (next().has_value()) {}
-    vector<Poly<K, ord>> res;
+    std::vector<Poly<K, ord>> res;
     for (size_t i = 0; i < G.size(); i++) if (!removed[i]) {
       res.push_back(G[i]);
     }
@@ -93,11 +94,11 @@ enum IdealMembershipStatus {
 };
 
 template<typename K, class ord = DegLexOrd>
-IdealMembershipStatus inIdeal(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
+IdealMembershipStatus inIdeal(const std::vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
   BuchbergerIncremental bi(G);
 
   for (size_t i = G.size(); i < max_sz; i++) {
-    optional<Poly<K, ord>> p = bi.next();
+    std::optional<Poly<K, ord>> p = bi.next();
     if (!p.has_value()) {
       return NotInIdeal;
     }
@@ -111,7 +112,7 @@ IdealMembershipStatus inIdeal(const vector<Poly<K, ord>>& G, Poly<K, ord> f, siz
 }
 
 template<typename K, class ord = DegLexOrd>
-tuple<Poly<K, ord>, tuple<Monomial, Monomial, K>, tuple<Monomial, Monomial, K>>
+std::tuple<Poly<K, ord>, std::tuple<Monomial, Monomial, K>, std::tuple<Monomial, Monomial, K>>
 S_polyReconstruct(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
   Monomial fa, fb, ga, gb;
   K fc, gc;
@@ -131,13 +132,13 @@ S_polyReconstruct(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) 
 
 template<typename K, class ord = DegLexOrd>
 struct BuchbergerIncrementalReconstruct {
-  vector<Poly<K, ord>> G;
-  vector<InIdealPoly<K, ord>> G_rec;
-  vector<bool> removed;
-  deque<tuple<Amb, size_t, size_t>> ambs;
+  std::vector<Poly<K, ord>> G;
+  std::vector<InIdealPoly<K, ord>> G_rec;
+  std::vector<bool> removed;
+  std::deque<std::tuple<Amb, size_t, size_t>> ambs;
   size_t t = 0;
 
-  BuchbergerIncrementalReconstruct(vector<Poly<K, ord>> GG) {
+  BuchbergerIncrementalReconstruct(std::vector<Poly<K, ord>> GG) {
     for (size_t i = 0; i < GG.size(); i++) {
       InIdealPoly<K, ord> f_rec;
       f_rec.terms.push_back({Monomial(), i, Monomial(), K(1)});
@@ -150,12 +151,12 @@ struct BuchbergerIncrementalReconstruct {
       return;
     }
 
-    ambs.push_back({move(amb), i, j});
+    ambs.push_back({std::move(amb), i, j});
   }
 
   void add_poly(const Poly<K, ord>& f, InIdealPoly<K, ord>& f_rec) {
     G.push_back(f);
-    G_rec.push_back(move(f_rec));
+    G_rec.push_back(std::move(f_rec));
     removed.push_back(false);
     for (size_t k = 0; k < G.size() - 1; k++) if (!removed[k]) {
       for (auto& amb : ambiguities(G[k].lm(), f.lm())) {
@@ -167,14 +168,14 @@ struct BuchbergerIncrementalReconstruct {
     }
   }
 
-  optional<Poly<K, ord>> next() {
+  std::optional<Poly<K, ord>> next() {
     if (t < G.size()) {
       Poly<K, ord> res = G[t];
       t++;
       return res;
     }
     while (!ambs.empty()) {
-      auto [amb, i, j] = move(ambs.front());
+      auto [amb, i, j] = std::move(ambs.front());
       ambs.pop_front();
 
       auto [s, gi_rec, gj_rec] = S_polyReconstruct(amb, G[i], G[j]);
@@ -200,9 +201,9 @@ struct BuchbergerIncrementalReconstruct {
     return {};
   }
 
-  vector<InIdealPoly<K, ord>> fullBase() {
+  std::vector<InIdealPoly<K, ord>> fullBase() {
     while (next().has_value()) {}
-    vector<InIdealPoly<K, ord>> res;
+    std::vector<InIdealPoly<K, ord>> res;
     for (size_t i = 0; i < G.size(); i++) if (!removed[i]) {
       res.push_back(G_rec[i]);
     }
@@ -211,13 +212,13 @@ struct BuchbergerIncrementalReconstruct {
 };
 
 template<typename K, class ord = DegLexOrd>
-pair<IdealMembershipStatus, optional<InIdealPoly<K, ord>>>
-inIdealReconstruct(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
+std::pair<IdealMembershipStatus, std::optional<InIdealPoly<K, ord>>>
+inIdealReconstruct(const std::vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz = 20) {
   BuchbergerIncrementalReconstruct bi(G);
 
   InIdealPoly<K, ord> res;
   for (size_t i = G.size(); i < max_sz; i++) {
-    optional<Poly<K, ord>> p = bi.next();
+    std::optional<Poly<K, ord>> p = bi.next();
     if (!p.has_value()) {
       return {NotInIdeal, {}};
     }
@@ -229,3 +230,5 @@ inIdealReconstruct(const vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t max_sz 
 
   return {Unknown, {}};
 }
+
+} // namespace nc_gb

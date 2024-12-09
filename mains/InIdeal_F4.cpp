@@ -1,10 +1,12 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 #include <omp.h>
-using namespace std;
 
 #include "nc_gb/matrix_mpq_class.h"
 #include "nc_gb/F4.h"
+
+using namespace std;
+using namespace nc_gb;
 
 typedef Poly<mpq_class> P;
 

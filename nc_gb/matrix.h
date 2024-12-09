@@ -1,9 +1,10 @@
 #pragma once
 #include <bits/stdc++.h>
-using namespace std;
+
+namespace nc_gb {
 
 template<typename K>
-using Matrix = vector<vector<K>>;
+using Matrix = std::vector<std::vector<K>>;
 
 // Reduce matrix to row echelon form
 template<typename K>
@@ -14,7 +15,7 @@ void rref(Matrix<K>& A) {
   if (m == 0) return;
 
 
-  vector<bool> used(n, false);
+  std::vector<bool> used(n, false);
 
   // Gaussian elimination
   for (size_t c = 0; c < m; c++) {
@@ -39,3 +40,5 @@ void rref(Matrix<K>& A) {
     }
   }
 }
+
+} // namespace nc_gb

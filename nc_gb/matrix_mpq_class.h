@@ -3,12 +3,10 @@
 #include <gmpxx.h>
 #include <flint/fmpq.h>
 #include <flint/fmpq_mat.h>
-using namespace std;
 
 #include "matrix.h"
 
-
-
+namespace nc_gb {
 
 void rref(Matrix<mpq_class>& A) {
   size_t n = A.size();
@@ -36,3 +34,5 @@ void rref(Matrix<mpq_class>& A) {
     }
   }
 }
+
+} // namespace nc_gb

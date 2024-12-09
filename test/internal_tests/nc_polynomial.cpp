@@ -1,9 +1,11 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
-using namespace std;
 
 #include "nc_gb/nc_polynomial.h"
 #include "random_gens.h"
+
+using namespace std;
+using namespace nc_gb;
 
 typedef Poly<mpq_class> P;
 typedef Monomial::X X;

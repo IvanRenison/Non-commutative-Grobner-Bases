@@ -1,13 +1,14 @@
 #pragma once
 #include <bits/stdc++.h>
-using namespace std;
 
 #include "nc_monomial.h"
+
+namespace nc_gb {
 
 /* Struct for representing non commutative polynomials */
 template<typename K, class ord = DegLexOrd>
 struct Poly {
-  vector<pair<Monomial, K>> terms;
+  std::vector<std::pair<Monomial, K>> terms;
   // Terms is mantened sorted by monomial with respect to ord
 
   Poly() {}
@@ -16,7 +17,7 @@ struct Poly {
       terms.push_back({m, c});
     }
   }
-  Poly(vector<pair<Monomial, K>> p) {
+  Poly(std::vector<std::pair<Monomial, K>> p) {
     sort(p.begin(), p.end(), [&](const auto& a, const auto& b) {
       return ord()(a.first, b.first);
     });
@@ -28,7 +29,7 @@ struct Poly {
           terms.pop_back();
         }
       } else {
-        terms.push_back(move(p[i]));
+        terms.push_back(std::move(p[i]));
       }
     }
   }
@@ -94,7 +95,7 @@ struct Poly {
     return res;
   }
   Poly operator*(const Poly& p) const {
-    vector<pair<Monomial, K>> res;
+    std::vector<std::pair<Monomial, K>> res;
     for (const auto& [m1, c1] : terms) {
       for (const auto& [m2, c2] : p.terms) {
         res.push_back({m1 * m2, c1 * c2});
@@ -138,7 +139,7 @@ struct Poly {
   }
 
   void operator+=(const Poly& p) {
-    vector<pair<Monomial, K>> new_terms;
+    std::vector<std::pair<Monomial, K>> new_terms;
     auto it = terms.begin(), itp = p.terms.begin();
     while (it != terms.end() && itp != p.terms.end()) {
       if (it->first == itp->first) {
@@ -148,7 +149,7 @@ struct Poly {
         }
         it++, itp++;
       } else if (ord()(it->first, itp->first)) {
-        new_terms.push_back(move(*it));
+        new_terms.push_back(std::move(*it));
         it++;
       } else {
         new_terms.push_back(*itp);
@@ -156,17 +157,17 @@ struct Poly {
       }
     }
     while (it != terms.end()) {
-      new_terms.push_back(move(*it));
+      new_terms.push_back(std::move(*it));
       it++;
     }
     while (itp != p.terms.end()) {
       new_terms.push_back(*itp);
       itp++;
     }
-    terms = move(new_terms);
+    terms = std::move(new_terms);
   }
   void operator-=(const Poly& p) {
-    vector<pair<Monomial, K>> new_terms;
+    std::vector<std::pair<Monomial, K>> new_terms;
     auto it = terms.begin(), itp = p.terms.begin();
     while (it != terms.end() && itp != p.terms.end()) {
       if (it->first == itp->first) {
@@ -176,7 +177,7 @@ struct Poly {
         }
         it++, itp++;
       } else if (ord()(it->first, itp->first)) {
-        new_terms.push_back(move(*it));
+        new_terms.push_back(std::move(*it));
         it++;
       } else {
         new_terms.push_back({itp->first, -itp->second});
@@ -184,14 +185,14 @@ struct Poly {
       }
     }
     while (it != terms.end()) {
-      new_terms.push_back(move(*it));
+      new_terms.push_back(std::move(*it));
       it++;
     }
     while (itp != p.terms.end()) {
       new_terms.push_back({itp->first, -itp->second});
       itp++;
     }
-    terms = move(new_terms);
+    terms = std::move(new_terms);
   }
   void operator*=(const Poly& p) {
     *this = *this * p;
@@ -230,17 +231,17 @@ struct Poly {
     return terms.empty();
   }
 
-  friend ostream& operator<<(ostream& os, const Poly& p) {
+  friend std::ostream& operator<<(std::ostream& os, const Poly& p) {
     os << p.terms.size() << '\n';
     for (const auto& [m, c] : p.terms) {
       os << c << ' ' << m << '\n';
     }
     return os;
   }
-  friend istream& operator>>(istream& is, Poly& p) {
+  friend std::istream& operator>>(std::istream& is, Poly& p) {
     size_t n;
     is >> n;
-    vector<pair<Monomial, K>> terms(n);
+    std::vector<std::pair<Monomial, K>> terms(n);
     for (size_t i = 0; i < n; i++) {
       Monomial mon;
       K c;
@@ -251,7 +252,7 @@ struct Poly {
     return is;
   }
 
-  void nice_print(ostream& os = cout) const {
+  void nice_print(std::ostream& os = std::cout) const {
     for (auto it = terms.begin(); it != terms.end(); it++) {
       if (it != terms.begin()) {
         if (it->second >= K(0)) {
@@ -272,8 +273,8 @@ struct Poly {
     }
     os << '\n';
   }
-  static Poly nice_read(istream& is = cin) {
-    vector<pair<Monomial, K>> terms;
+  static Poly nice_read(std::istream& is = std::cin) {
+    std::vector<std::pair<Monomial, K>> terms;
     bool next_neg = false;
     while (is.peek() == ' ') is.ignore();
     if (is.peek() == '-') {
@@ -331,7 +332,7 @@ struct PolyOrd {
 
 /* For each x in the monomials of p replace x by news[x] */
 template<typename K, class ord = DegLexOrd>
-Poly<K, ord> replace(const Monomial& m, const vector<Poly<K, ord>>& news) {
+Poly<K, ord> replace(const Monomial& m, const std::vector<Poly<K, ord>>& news) {
   Poly<K, ord> res(Monomial(), K(1));
   for (auto x : m.vals) {
     res *= news[x];
@@ -341,10 +342,12 @@ Poly<K, ord> replace(const Monomial& m, const vector<Poly<K, ord>>& news) {
 
 /* For each x in the monomials of p replace x by news[x] */
 template<typename K, class ord = DegLexOrd>
-Poly<K, ord> replace(const Poly<K, ord>& p, const vector<Poly<K, ord>>& news) {
+Poly<K, ord> replace(const Poly<K, ord>& p, const std::vector<Poly<K, ord>>& news) {
   Poly<K, ord> res;
   for (const auto& [m, c] : p.terms) {
     res += replace(m, news) * c;
   }
   return res;
 }
+
+} // namespace nc_gb

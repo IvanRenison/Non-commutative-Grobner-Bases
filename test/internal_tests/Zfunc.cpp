@@ -1,7 +1,9 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #include "nc_gb/Zfunc.h"
+
+using namespace std;
+using namespace nc_gb;
 
 template <typename Iterator>
 vector<size_t> slow_Z(Iterator start, Iterator end) {

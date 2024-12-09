@@ -1,12 +1,13 @@
 #pragma once
 #include <bits/stdc++.h>
-using namespace std;
 
 #include "reductions.h"
 
+namespace nc_gb {
+
 /* Check if two Gröbner bases generate the same ideal */
 template<typename K, class ord = DegLexOrd>
-bool cmpBases(const vector<Poly<K, ord>>& G0, const vector<Poly<K, ord>>& G1) {
+bool cmpBases(const std::vector<Poly<K, ord>>& G0, const std::vector<Poly<K, ord>>& G1) {
   for (auto f : G0) {
     reduce<K, DegLexOrd>(f, G1);
     if (!f.isZero()) {
@@ -21,3 +22,5 @@ bool cmpBases(const vector<Poly<K, ord>>& G0, const vector<Poly<K, ord>>& G1) {
   }
   return true;
 }
+
+} // namespace nc_gb

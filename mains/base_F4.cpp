@@ -1,9 +1,11 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 #include <omp.h>
-using namespace std;
 
 #include "nc_gb/F4.h"
+
+using namespace std;
+using namespace nc_gb;
 
 typedef mpq_class R;
 typedef Poly<R> P;
