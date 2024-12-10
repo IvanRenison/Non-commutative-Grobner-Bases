@@ -86,6 +86,8 @@ template<typename K, class ord = DegLexOrd>
 std::vector<Poly<K, ord>> multiReduction(const std::vector<Poly<K, ord>>& G, const std::vector<Poly<K, ord>>& P) {
   std::vector<Poly<K, ord>> GG = symbolicPreprocessing(G, P);
 
+  size_t GG_size = GG.size();
+
   for (const auto& f : P) {
     GG.push_back(f);
   }
@@ -99,8 +101,8 @@ std::vector<Poly<K, ord>> multiReduction(const std::vector<Poly<K, ord>>& G, con
   }
 
   std::vector<bool> GG_lms(ids.size(), false);
-  for (const auto& f : GG) {
-    GG_lms[ids[f.lm()]] = true;
+  for (size_t i = 0; i < GG_size; i++) {
+    GG_lms[ids[GG[i].lm()]] = true;
   }
 
   std::vector<Poly<K, ord>> res;
@@ -207,11 +209,9 @@ struct F4Incremental {
       std::vector<Poly<K, ord>> P;
       for (auto& [amb, i, j] : ambs_per_deg[k]) {
         if (amb.type == Amb::Inclusion) {
-          P.push_back(amb.a * G[j] * amb.b);
-          P.push_back(G[i]);
+          P.push_back(amb.a * G[j] * amb.b - G[i]);
         } else {
-          P.push_back(G[i] * amb.b);
-          P.push_back(amb.a * G[j]);
+          P.push_back(G[i] * amb.b - amb.a * G[j]);
         }
       }
 
