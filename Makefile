@@ -51,7 +51,10 @@ clean:
 	rm -f mains/*.run
 	rm -f test/*.run
 	rm -f test/base_tests/*.run
-	rm -f test/internal_tests/*.run
+	rm -rf test/base_tests/output
+	rm -f test/commonTestCases/*.run
+	rm -rf test/commonTestCases/testCases
 	rm -f test/InIdeal_tests/*.run
-	rm -rf test/base_tests/testCases
 	rm -rf test/InIdeal_tests/testCases
+	rm -f test/internal_tests/*.run
+	rm -f test/reconstruction_tests/*.run
