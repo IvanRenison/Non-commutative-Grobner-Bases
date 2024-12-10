@@ -3,7 +3,7 @@
 
 #include "reductions.h"
 
-namespace nc_gb {
+namespace ncgb {
 
 /* Check if two Gröbner bases generate the same ideal */
 template<typename K, class ord = DegLexOrd>
@@ -23,4 +23,4 @@ bool cmpBases(const std::vector<Poly<K, ord>>& G0, const std::vector<Poly<K, ord
   return true;
 }
 
-} // namespace nc_gb
+} // namespace ncgb

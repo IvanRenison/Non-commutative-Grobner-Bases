@@ -3,7 +3,7 @@
 
 #include "nc_monomial.h"
 
-namespace nc_gb {
+namespace ncgb {
 
 /* Struct for representing non commutative polynomials */
 template<typename K, class ord = DegLexOrd>
@@ -350,4 +350,4 @@ Poly<K, ord> replace(const Poly<K, ord>& p, const std::vector<Poly<K, ord>>& new
   return res;
 }
 
-} // namespace nc_gb
+} // namespace ncgb

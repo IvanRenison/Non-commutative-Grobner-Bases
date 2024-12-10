@@ -2,10 +2,10 @@
 #include <gmpxx.h>
 #include <omp.h>
 
-#include "nc_gb/F4.h"
+#include "ncgb/F4.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 typedef mpq_class R;
 typedef Poly<R> P;

@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "nc_gb/Buchberger.h"
+#include "ncgb/Buchberger.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 typedef mpq_class R;
 typedef Poly<R> P;

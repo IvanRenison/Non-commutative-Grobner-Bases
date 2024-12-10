@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "nc_gb/nc_polynomial.h"
+#include "ncgb/nc_polynomial.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 typedef Monomial::X X;
 

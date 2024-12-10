@@ -3,7 +3,7 @@
 
 #include "nc_polynomial.h"
 
-namespace nc_gb {
+namespace ncgb {
 
 /*
 Store a polynomial as a linear combination in the monomials of a generator set
@@ -103,4 +103,4 @@ InIdealPoly<K, ord> operator*(const Monomial& m, const InIdealPoly<K, ord>& p) {
     return res;
 }
 
-} // namespace nc_gb
+} // namespace ncgb

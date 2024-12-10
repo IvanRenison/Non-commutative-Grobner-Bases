@@ -6,7 +6,7 @@
 
 #include "matrix.h"
 
-namespace nc_gb {
+namespace ncgb {
 
 void rref(Matrix<mpq_class>& A) {
   size_t n = A.size();
@@ -35,4 +35,4 @@ void rref(Matrix<mpq_class>& A) {
   }
 }
 
-} // namespace nc_gb
+} // namespace ncgb

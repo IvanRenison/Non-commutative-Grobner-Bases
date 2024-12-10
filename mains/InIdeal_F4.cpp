@@ -2,11 +2,11 @@
 #include <gmpxx.h>
 #include <omp.h>
 
-#include "nc_gb/matrix_mpq_class.h"
-#include "nc_gb/F4.h"
+#include "ncgb/matrix_mpq_class.h"
+#include "ncgb/F4.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 typedef Poly<mpq_class> P;
 

@@ -5,7 +5,7 @@
 #include "matrix.h"
 #include "reductions.h"
 
-namespace nc_gb {
+namespace ncgb {
 
 template<typename K, class ord = DegLexOrd>
 std::vector<Poly<K, ord>> symbolicPreprocessing(const std::vector<Poly<K, ord>>& G, const std::vector<Poly<K, ord>>& P) {
@@ -282,4 +282,4 @@ IdealMembershipStatus inIdeal_F4(const std::vector<Poly<K, ord>>& G, Poly<K, ord
   return Unknown;
 }
 
-} // namespace nc_gb
+} // namespace ncgb

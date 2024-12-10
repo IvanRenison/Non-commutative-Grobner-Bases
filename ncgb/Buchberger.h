@@ -4,7 +4,7 @@
 #include "ambiguities.h"
 #include "reductions.h"
 
-namespace nc_gb {
+namespace ncgb {
 
 template<typename K, class ord = DegLexOrd>
 Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
@@ -231,4 +231,4 @@ inIdealReconstruct(const std::vector<Poly<K, ord>>& G, Poly<K, ord> f, size_t ma
   return {Unknown, {}};
 }
 
-} // namespace nc_gb
+} // namespace ncgb

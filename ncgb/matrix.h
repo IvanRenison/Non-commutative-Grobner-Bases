@@ -1,7 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
 
-namespace nc_gb {
+namespace ncgb {
 
 template<typename K>
 using Matrix = std::vector<std::vector<K>>;
@@ -41,4 +41,4 @@ void rref(Matrix<K>& A) {
   }
 }
 
-} // namespace nc_gb
+} // namespace ncgb

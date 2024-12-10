@@ -4,7 +4,7 @@
 #include "nc_polynomial.h"
 #include "nc_polyonomial_inIdeal.h"
 
-namespace nc_gb {
+namespace ncgb {
 
 /* Reduce inplace with one polynomial, return true iff the polynomial was reduced */
 template<typename K, class ord = DegLexOrd>
@@ -135,4 +135,4 @@ reduceReconstruct(Poly<K, ord>& f, const std::vector<Poly<K, ord>>& G, const std
   return reduceReconstruct(f, G, g_rec, marks);
 }
 
-} // namespace nc_gb
+} // namespace ncgb

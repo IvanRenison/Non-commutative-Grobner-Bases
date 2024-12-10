@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "nc_gb/cmpBases.h"
+#include "ncgb/cmpBases.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 typedef mpq_class R;
 typedef Poly<R> P;

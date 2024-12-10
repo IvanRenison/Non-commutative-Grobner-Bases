@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 
-#include "nc_gb/ambiguities.h"
+#include "ncgb/ambiguities.h"
 #include "random_gens.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 void test() {
   Monomial m0 = random_monomial(), m1 = random_monomial();

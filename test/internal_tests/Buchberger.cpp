@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 
-#include "nc_gb/Buchberger.h"
+#include "ncgb/Buchberger.h"
 #include "random_gens.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 typedef Poly<mpq_class> P;
 

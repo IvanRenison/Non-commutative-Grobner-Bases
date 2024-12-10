@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 
-#include "nc_gb/nc_monomial.h"
+#include "ncgb/nc_monomial.h"
 #include "random_gens.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 typedef Monomial::X X;
 

@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 
-#include "nc_gb/nc_polynomial.h"
+#include "ncgb/nc_polynomial.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 vector<vector<string>> tris = {
   {"aa", "bbb", "abababbabbabababbabb"}, // tri1

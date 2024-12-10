@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 
 #include "nc_polynomial.h"
-namespace nc_gb {
+namespace ncgb {
 
 struct Amb {
   const Monomial& p, q;
@@ -141,4 +141,4 @@ bool checkDeletionCriteria(std::vector<Poly<K, ord>>& G, Amb& amb, size_t i, siz
   return false;
 }
 
-} // namespace nc_gb
+} // namespace ncgb

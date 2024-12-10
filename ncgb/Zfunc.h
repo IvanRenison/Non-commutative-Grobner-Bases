@@ -1,7 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
 
-namespace nc_gb {
+namespace ncgb {
 
 /*
 Z function
@@ -45,4 +45,4 @@ std::vector<size_t> Z(const std::vector<X>& s, const std::vector<X>& t) {
   return z;
 }
 
-} // namespace nc_gb
+} // namespace ncgb

@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 #include <omp.h>
 
-#include "nc_gb/F4.h"
+#include "ncgb/F4.h"
 #include "extras/ModularArithmetic.h"
 
 using namespace std;
-using namespace nc_gb;
+using namespace ncgb;
 
 const size_t mod = 1e9 + 7;
 typedef Mod<mod> Zp;

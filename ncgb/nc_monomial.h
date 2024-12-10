@@ -3,7 +3,7 @@
 
 #include "Zfunc.h"
 
-namespace nc_gb {
+namespace ncgb {
 
 /* Struct for representing non commutative monomials */
 struct Monomial {
@@ -161,4 +161,4 @@ Monomial replace(const Monomial& m, const std::vector<Monomial>& news) {
   return res;
 }
 
-} // namespace nc_gb
+} // namespace ncgb
