@@ -159,21 +159,6 @@ struct F4Incremental {
   std::vector<std::vector<std::tuple<Amb, size_t, size_t>>> ambs_per_deg;
   // We store ambiguities by their degree
 
-/*   void add_amb(Amb& amb, size_t i, size_t j) { // i and j are the indices of the polynomials in G
-    if (checkDeletionCriteria(G, amb, i, j)) {
-      return;
-    }
-
-    #pragma omp critical
-    {
-      size_t d = amb.size();
-      while (ambs_per_deg.size() <= d) {
-        ambs_per_deg.push_back({});
-      }
-      ambs_per_deg[d].push_back({std::move(amb), i, j});
-    }
-  } */
-
   void add_poly(Poly<K, ord>& f) {
     G.push_back(std::move(f));
     size_t lim = G.size() - 1;
