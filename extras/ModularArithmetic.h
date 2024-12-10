@@ -115,3 +115,8 @@ struct Mod {
     return x;
   }
 };
+
+template <size_t mod>
+Mod<mod> abs(Mod<mod> m) {
+  return m;
+}
