@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include <omp.h>
 
 #include "ncgb/F4.h"
 #include "extras/ModularArithmetic.h"
@@ -13,8 +12,6 @@ typedef Mod<mod> Zp;
 typedef Poly<Zp> P;
 
 int main() {
-  omp_set_num_threads(8);
-
   size_t n;
   cin >> n;
   vector<P> G(n);

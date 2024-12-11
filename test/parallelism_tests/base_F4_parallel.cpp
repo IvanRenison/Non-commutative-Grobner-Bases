@@ -1,5 +1,9 @@
+/*
+This file is the same that mains/base_F4.cpp but reding the amount of threads by command line
+*/
 #include <bits/stdc++.h>
 #include <gmpxx.h>
+#include <omp.h>
 
 #include "ncgb/F4.h"
 
@@ -9,7 +13,11 @@ using namespace ncgb;
 typedef mpq_class R;
 typedef Poly<R> P;
 
-int main() {
+int main(int argc, char** argv) {
+  assert(argc == 2);
+  int threads = atoi(argv[1]);
+  assert(threads > 0);
+  omp_set_num_threads(threads);
 
   size_t n;
   cin >> n;

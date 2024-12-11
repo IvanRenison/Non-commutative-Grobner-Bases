@@ -17,7 +17,8 @@ BASE_TESTS_FILES := $(wildcard test/base_tests/*.cpp)
 BASE_TESTS_RUN_FILES := $(patsubst %.cpp, %.run, $(BASE_TESTS_FILES))
 RECONSTRUCTION_TESTS_FILES := $(wildcard test/reconstruction_tests/*.cpp)
 RECONSTRUCTION_TESTS_RUN_FILES := $(patsubst %.cpp, %.run, $(RECONSTRUCTION_TESTS_FILES))
-
+PARALLELISM_TESTS_FILES := $(wildcard test/parallelism_tests/*.cpp)
+PARALLELISM_TESTS_RUN_FILES := $(patsubst %.cpp, %.run, $(PARALLELISM_TESTS_FILES))
 
 %.run: %.cpp $(HEADER_FILES)
 	$(COMP) $(INCLUDE) $< -o $@ $(LIBS)
@@ -43,6 +44,9 @@ InIdeal_tests: $(TEST_INIDEAL_RUN_FILES) build_mains
 
 reconstruction_tests: $(RECONSTRUCTION_TESTS_RUN_FILES) commonTestCases
 	cd test/reconstruction_tests && python3 run.py
+
+parallelism_tests: $(PARALLELISM_TESTS_RUN_FILES) build_mains commonTestCases
+	cd test/parallelism_tests && python3 run.py
 
 test: internal_tests reconstruction_tests base_tests InIdeal_tests
 
