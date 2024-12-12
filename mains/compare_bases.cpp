@@ -1,3 +1,5 @@
+// This file reads two lists of polynomials from two files (in nice format) and
+// assuming they are rational Gröbner bases, checks if they generate the same rational ideal.
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
