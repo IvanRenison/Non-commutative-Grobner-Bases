@@ -1,7 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
 
-#include "nc_polynomial.h"
+#include "nc_polynomial.hpp"
 namespace ncgb {
 
 struct Amb {

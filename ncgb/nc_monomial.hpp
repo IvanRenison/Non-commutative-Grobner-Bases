@@ -1,7 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
 
-#include "Zfunc.h"
+#include "Zfunc.hpp"
 
 namespace ncgb {
 

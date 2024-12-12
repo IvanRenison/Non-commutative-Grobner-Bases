@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
-#include "ncgb/ambiguities.h"
-#include "random_gens.h"
+#include "ncgb/ambiguities.hpp"
+#include "random_gens.hpp"
 
 using namespace std;
 using namespace ncgb;

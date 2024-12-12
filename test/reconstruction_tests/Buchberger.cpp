@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "ncgb/Buchberger.h"
-#include "ncgb/cmpBases.h"
+#include "ncgb/Buchberger.hpp"
+#include "ncgb/cmpBases.hpp"
 
 using namespace std;
 using namespace ncgb;

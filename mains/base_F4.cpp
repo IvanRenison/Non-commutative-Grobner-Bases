@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "ncgb/F4.h"
+#include "ncgb/F4.hpp"
 
 using namespace std;
 using namespace ncgb;

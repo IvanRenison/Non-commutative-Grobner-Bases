@@ -1,8 +1,8 @@
 #pragma once
 #include <bits/stdc++.h>
 
-#include "ambiguities.h"
-#include "reductions.h"
+#include "ambiguities.hpp"
+#include "reductions.hpp"
 
 namespace ncgb {
 

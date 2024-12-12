@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-#include "ncgb/Zfunc.h"
+#include "ncgb/Zfunc.hpp"
 
 using namespace std;
 using namespace ncgb;

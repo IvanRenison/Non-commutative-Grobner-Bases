@@ -5,7 +5,7 @@ This file is the same that mains/base_F4.cpp but reding the amount of threads by
 #include <gmpxx.h>
 #include <omp.h>
 
-#include "ncgb/F4.h"
+#include "ncgb/F4.hpp"
 
 using namespace std;
 using namespace ncgb;

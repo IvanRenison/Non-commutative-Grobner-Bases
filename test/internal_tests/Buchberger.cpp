@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
-#include "ncgb/Buchberger.h"
-#include "random_gens.h"
+#include "ncgb/Buchberger.hpp"
+#include "random_gens.hpp"
 
 using namespace std;
 using namespace ncgb;

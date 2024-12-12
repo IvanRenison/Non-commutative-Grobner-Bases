@@ -1,7 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
 
-#include "nc_monomial.h"
+#include "nc_monomial.hpp"
 
 namespace ncgb {
 

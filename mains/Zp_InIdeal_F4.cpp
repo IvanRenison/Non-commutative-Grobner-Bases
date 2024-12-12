@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
-#include "ncgb/F4.h"
-#include "extras/ModularArithmetic.h"
+#include "ncgb/F4.hpp"
+#include "extras/ModularArithmetic.hpp"
 
 using namespace std;
 using namespace ncgb;

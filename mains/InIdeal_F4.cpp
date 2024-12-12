@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "ncgb/matrix_mpq_class.h"
-#include "ncgb/F4.h"
+#include "ncgb/matrix_mpq_class.hpp"
+#include "ncgb/F4.hpp"
 
 using namespace std;
 using namespace ncgb;

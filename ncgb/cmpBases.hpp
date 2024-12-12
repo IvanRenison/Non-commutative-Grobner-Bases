@@ -1,7 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
 
-#include "reductions.h"
+#include "reductions.hpp"
 
 namespace ncgb {
 

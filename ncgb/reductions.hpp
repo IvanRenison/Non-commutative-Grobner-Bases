@@ -1,8 +1,8 @@
 #pragma once
 #include <bits/stdc++.h>
 
-#include "nc_polynomial.h"
-#include "nc_polyonomial_inIdeal.h"
+#include "nc_polynomial.hpp"
+#include "nc_polyonomial_inIdeal.hpp"
 
 namespace ncgb {
 

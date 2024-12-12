@@ -2,7 +2,7 @@
 
 This was my degree thesis project. It consist of a library for computing Gröbner basis in the free algebra.
 
-In tha `ncgb` folder you can find the library, everything is in `.h` files because we use templates to make the code generic.
+In tha `ncgb` folder you can find the library, everything is in `.hpp` files because we use templates to make the code generic.
 
 In the `mains` folder you can find several mains that use the library.
 

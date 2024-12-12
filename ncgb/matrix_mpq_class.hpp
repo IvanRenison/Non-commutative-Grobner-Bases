@@ -4,7 +4,7 @@
 #include <flint/fmpq.h>
 #include <flint/fmpq_mat.h>
 
-#include "matrix.h"
+#include "matrix.hpp"
 
 namespace ncgb {
 

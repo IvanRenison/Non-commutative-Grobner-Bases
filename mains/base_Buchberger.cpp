@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "ncgb/Buchberger.h"
+#include "ncgb/Buchberger.hpp"
 
 using namespace std;
 using namespace ncgb;

@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
-#include "ncgb/Buchberger.h"
-#include "extras/ModularArithmetic.h"
+#include "ncgb/Buchberger.hpp"
+#include "extras/ModularArithmetic.hpp"
 
 using namespace std;
 using namespace ncgb;

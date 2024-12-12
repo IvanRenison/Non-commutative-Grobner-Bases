@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "ncgb/nc_polynomial.h"
+#include "ncgb/nc_polynomial.hpp"
 
 using namespace std;
 using namespace ncgb;

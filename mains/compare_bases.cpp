@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "ncgb/cmpBases.h"
+#include "ncgb/cmpBases.hpp"
 
 using namespace std;
 using namespace ncgb;

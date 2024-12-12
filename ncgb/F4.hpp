@@ -1,9 +1,9 @@
 #pragma once
 #include <bits/stdc++.h>
 
-#include "ambiguities.h"
-#include "matrix.h"
-#include "reductions.h"
+#include "ambiguities.hpp"
+#include "matrix.hpp"
+#include "reductions.hpp"
 
 namespace ncgb {
 

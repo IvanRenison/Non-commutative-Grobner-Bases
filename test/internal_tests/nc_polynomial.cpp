@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 #include <gmpxx.h>
 
-#include "ncgb/nc_polynomial.h"
-#include "random_gens.h"
+#include "ncgb/nc_polynomial.hpp"
+#include "random_gens.hpp"
 
 using namespace std;
 using namespace ncgb;

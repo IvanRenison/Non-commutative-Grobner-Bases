@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
-#include "ncgb/nc_monomial.h"
-#include "random_gens.h"
+#include "ncgb/nc_monomial.hpp"
+#include "random_gens.hpp"
 
 using namespace std;
 using namespace ncgb;

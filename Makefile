@@ -4,7 +4,7 @@ COMP=g++ -Wall -Wextra -std=c++20 -O2
 LIBS=-lgivaro -lgmp -lgmpxx -lflint -fopenmp
 INCLUDE=-I.
 
-HEADER_FILES := $(shell find . -name "*.h")
+HEADER_FILES := $(shell find . -name "*.hpp")
 MAIN_FILES := $(wildcard mains/*.cpp)
 MAIN_RUN_FILES := $(patsubst %.cpp, %.run, $(MAIN_FILES))
 
