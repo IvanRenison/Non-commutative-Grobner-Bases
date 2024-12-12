@@ -8,6 +8,8 @@ namespace ncgb {
 /*
 Store a polynomial as a linear combination in the monomials of a generator set
 If the generator set is G, the polynomial is sum_({m0, i, m1, c} in terms) c * m0 * G[i] * m1
+
+Used for showing how are de element of a Gröbner base constructed from the generator set
 */
 template<typename K, class ord = DegLexOrd>
 struct InIdealPoly {
@@ -61,6 +63,7 @@ struct InIdealPoly {
     }
   }
 
+  // Construct the real polynomial
   Poly<K, ord> construct(const std::vector<Poly<K, ord>>& G) const {
     Poly<K, ord> res;
     for (auto [m0, i, m1, c] : terms) {
