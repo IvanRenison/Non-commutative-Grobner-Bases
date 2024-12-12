@@ -17,3 +17,5 @@ c_m n_m x_{m, 1} ⋯ x_{m, n_m}
 ```
 
 Where c_i are element of the field, and x_{i, j} are the variables, represented as numbers.
+
+See the `Makefile` to get an idea of how to compile. No libraries are strictly required for the `hpp` files, but for modular arithmetic it's recommended to have `givaro`, and for rational numbers `gmp` and `flint`. Also, por parallelization you will need `openmp`.
