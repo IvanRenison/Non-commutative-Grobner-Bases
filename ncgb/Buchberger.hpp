@@ -7,15 +7,6 @@
 
 namespace ncgb {
 
-template<typename K, class ord = DegLexOrd>
-Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
-  if (amb.type == Amb::Inclusion) {
-    return f / f.lc() - (amb.a * g * amb.b) / g.lc();
-  } else {
-    return (f * amb.b) / f.lc() - (amb.a * g) / g.lc();
-  }
-}
-
 // Struct for running the Buchberger algorithm
 template<typename K, class ord = DegLexOrd>
 struct BuchbergerIncremental {

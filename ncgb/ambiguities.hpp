@@ -71,6 +71,15 @@ ambiguities(const Monomial& p, const Monomial& q) {
   return res;
 }
 
+template<typename K, class ord = DegLexOrd>
+Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
+  if (amb.type == Amb::Inclusion) {
+    return f / f.lc() - (amb.a * g * amb.b) / g.lc();
+  } else {
+    return (f * amb.b) / f.lc() - (amb.a * g) / g.lc();
+  }
+}
+
 /* Check if amb with o satisfy the general deletion criteria (Corollary 4.35 of Hof20). Pay attention polynomial indexes also.
 Returns true if amb does not have to be added */
 bool checkGeneralDeletionCriteria(const Amb& amb, const Monomial& o) {
