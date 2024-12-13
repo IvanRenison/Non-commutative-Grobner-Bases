@@ -12,7 +12,7 @@ template<typename K, class ord = DegLexOrd>
 struct BuchbergerIncremental {
   std::vector<Poly<K, ord>> G;
   std::vector<bool> removed;
-  std::deque<std::tuple<Amb, size_t, size_t>> ambs;
+  std::queue<std::tuple<Amb, size_t, size_t>> ambs;
   size_t t = 0;
 
   // Construct an element with the generator set
@@ -27,7 +27,7 @@ struct BuchbergerIncremental {
       return;
     }
 
-    ambs.push_back({std::move(amb), i, j});
+    ambs.push({std::move(amb), i, j});
   }
 
   void add_poly(const Poly<K, ord>& f) {
@@ -52,7 +52,7 @@ struct BuchbergerIncremental {
     }
     while (!ambs.empty()) {
       auto [amb, i, j] = std::move(ambs.front());
-      ambs.pop_front();
+      ambs.pop();
 
       Poly<K, ord> s = S_poly(amb, G[i], G[j]);
       reduce(s, G, removed);
@@ -128,7 +128,7 @@ struct BuchbergerIncrementalReconstruct {
   std::vector<Poly<K, ord>> G;
   std::vector<InIdealPoly<K, ord>> G_rec;
   std::vector<bool> removed;
-  std::deque<std::tuple<Amb, size_t, size_t>> ambs;
+  std::queue<std::tuple<Amb, size_t, size_t>> ambs;
   size_t t = 0;
 
   BuchbergerIncrementalReconstruct(std::vector<Poly<K, ord>> GG) {
@@ -144,7 +144,7 @@ struct BuchbergerIncrementalReconstruct {
       return;
     }
 
-    ambs.push_back({std::move(amb), i, j});
+    ambs.push({std::move(amb), i, j});
   }
 
   void add_poly(const Poly<K, ord>& f, InIdealPoly<K, ord>& f_rec) {
@@ -169,7 +169,7 @@ struct BuchbergerIncrementalReconstruct {
     }
     while (!ambs.empty()) {
       auto [amb, i, j] = std::move(ambs.front());
-      ambs.pop_front();
+      ambs.pop();
 
       auto [s, gi_rec, gj_rec] = S_polyReconstruct(amb, G[i], G[j]);
       InIdealPoly<K, ord> s_rec = reduceReconstruct(s, G, G_rec, removed);
