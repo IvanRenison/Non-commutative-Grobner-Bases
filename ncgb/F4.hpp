@@ -213,11 +213,7 @@ struct F4Incremental {
 
       std::vector<Poly<K, ord>> P;
       for (auto& [amb, i, j] : ambs_per_deg[k]) {
-        if (amb.type == Amb::Inclusion) {
-          P.push_back(amb.a * G[j] * amb.b - G[i]);
-        } else {
-          P.push_back(G[i] * amb.b - amb.a * G[j]);
-        }
+        P.push_back(S_poly(amb, G[i], G[j]));
       }
 
       ambs_per_deg[k].clear();
