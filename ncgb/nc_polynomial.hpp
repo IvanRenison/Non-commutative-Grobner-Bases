@@ -6,18 +6,18 @@
 namespace ncgb {
 
 /* Struct for representing non commutative polynomials */
-template<typename K, class ord = DegLexOrd>
+template<typename K, typename X = __uint8_t, class ord = DegLexOrd<X>>
 struct Poly {
-  std::vector<std::pair<Monomial, K>> terms;
-  // Terms is mantened sorted by monomial with respect to ord
+  std::vector<std::pair<Monomial<X>, K>> terms;
+  // Terms is mantened sorted by monomial<X> with respect to ord
 
   Poly() {}
-  Poly(const Monomial& m, K c = K(1)) {
+  Poly(const Monomial<X>& m, K c = K(1)) {
     if (c != K(0)) {
       terms.push_back({m, c});
     }
   }
-  Poly(std::vector<std::pair<Monomial, K>> p) {
+  Poly(std::vector<std::pair<Monomial<X>, K>> p) {
     sort(p.begin(), p.end(), [&](const auto& a, const auto& b) {
       return ord()(a.first, b.first);
     });
@@ -95,7 +95,7 @@ struct Poly {
     return res;
   }
   Poly operator*(const Poly& p) const {
-    std::vector<std::pair<Monomial, K>> res;
+    std::vector<std::pair<Monomial<X>, K>> res;
     for (const auto& [m1, c1] : terms) {
       for (const auto& [m2, c2] : p.terms) {
         res.push_back({m1 * m2, c1 * c2});
@@ -103,7 +103,7 @@ struct Poly {
     }
     return Poly(res);
   }
-  Poly operator*(Monomial m) const {
+  Poly operator*(Monomial<X> m) const {
     Poly res = *this;
     for (auto& [m_, d] : res.terms) {
       m_ *= m;
@@ -139,7 +139,7 @@ struct Poly {
   }
 
   void operator+=(const Poly& p) {
-    std::vector<std::pair<Monomial, K>> new_terms;
+    std::vector<std::pair<Monomial<X>, K>> new_terms;
     auto it = terms.begin(), itp = p.terms.begin();
     while (it != terms.end() && itp != p.terms.end()) {
       if (it->first == itp->first) {
@@ -167,7 +167,7 @@ struct Poly {
     terms = std::move(new_terms);
   }
   void operator-=(const Poly& p) {
-    std::vector<std::pair<Monomial, K>> new_terms;
+    std::vector<std::pair<Monomial<X>, K>> new_terms;
     auto it = terms.begin(), itp = p.terms.begin();
     while (it != terms.end() && itp != p.terms.end()) {
       if (it->first == itp->first) {
@@ -197,7 +197,7 @@ struct Poly {
   void operator*=(const Poly& p) {
     *this = *this * p;
   }
-  void operator*=(Monomial m) {
+  void operator*=(Monomial<X> m) {
     for (auto& [m_, d] : terms) {
       m_ *= m;
     }
@@ -208,12 +208,12 @@ struct Poly {
     }
   }
 
-  K coeff(const Monomial& m) const {
+  K coeff(const Monomial<X>& m) const {
     auto it = lower_bound(terms.begin(), terms.end(), m, ord());
     return it == terms.end() || it->first != m ? K(0) : it->second;
   }
 
-  const Monomial& lm() const {
+  const Monomial<X>& lm() const {
     return terms.rbegin()->first;
   }
   K lc() const {
@@ -241,9 +241,9 @@ struct Poly {
   friend std::istream& operator>>(std::istream& is, Poly& p) {
     size_t n;
     is >> n;
-    std::vector<std::pair<Monomial, K>> terms(n);
+    std::vector<std::pair<Monomial<X>, K>> terms(n);
     for (size_t i = 0; i < n; i++) {
-      Monomial mon;
+      Monomial<X> mon;
       K c;
       is >> c >> mon;
       terms[i] = {mon, c};
@@ -274,7 +274,7 @@ struct Poly {
     os << '\n';
   }
   static Poly nice_read(std::istream& is = std::cin) {
-    std::vector<std::pair<Monomial, K>> terms;
+    std::vector<std::pair<Monomial<X>, K>> terms;
     bool next_neg = false;
     while (is.peek() == ' ') is.ignore();
     if (is.peek() == '-') {
@@ -291,9 +291,9 @@ struct Poly {
       next_neg = false;
       while (is.peek() == ' ') is.ignore();
       if (!isalpha(is.peek())) { // Empty monomial
-        terms.push_back({Monomial(), c});
+        terms.push_back({Monomial<X>(), c});
       } else {
-        Monomial m = Monomial::nice_read(is);
+        Monomial<X> m = Monomial<X>::nice_read(is);
         terms.push_back({m, c});
       }
       while (is.peek() == ' ') is.ignore();
@@ -306,18 +306,18 @@ struct Poly {
   }
 };
 
-template<typename K, class ord = DegLexOrd>
-Poly<K, ord> operator*(Monomial m, const Poly<K, ord>& p) {
-  Poly<K, ord> res = p;
+template<typename K, typename X, class ord = DegLexOrd<X>>
+Poly<K, X, ord> operator*(Monomial<X> m, const Poly<K, X, ord>& p) {
+  Poly<K, X, ord> res = p;
   for (auto& [m_, d] : res.terms) {
     m_ = m * m_;
   }
   return res;
 }
 
-template<typename K, class ord = DegLexOrd>
+template<typename K, typename X, class ord = DegLexOrd<X>>
 struct PolyOrd {
-  bool operator()(const Poly<K, ord>& p1, const Poly<K, ord>& p2) const {
+  bool operator()(const Poly<K, X, ord>& p1, const Poly<K, X, ord>& p2) const {
     for (auto it1 = p1.terms.rbegin(), it2 = p2.terms.rbegin();
         it1 != p1.terms.rend() && it2 != p2.terms.rend();
         it1++, it2++) {
@@ -331,9 +331,9 @@ struct PolyOrd {
 };
 
 /* For each x in the monomials of p replace x by news[x] */
-template<typename K, class ord = DegLexOrd>
-Poly<K, ord> replace(const Monomial& m, const std::vector<Poly<K, ord>>& news) {
-  Poly<K, ord> res(Monomial(), K(1));
+template<typename K, typename X, class ord = DegLexOrd<X>>
+Poly<K, X, ord> replace(const Monomial<X>& m, const std::vector<Poly<K, X, ord>>& news) {
+  Poly<K, X, ord> res(Monomial<X>(), K(1));
   for (auto x : m.vals) {
     res *= news[x];
   }
@@ -341,9 +341,9 @@ Poly<K, ord> replace(const Monomial& m, const std::vector<Poly<K, ord>>& news) {
 }
 
 /* For each x in the monomials of p replace x by news[x] */
-template<typename K, class ord = DegLexOrd>
-Poly<K, ord> replace(const Poly<K, ord>& p, const std::vector<Poly<K, ord>>& news) {
-  Poly<K, ord> res;
+template<typename K, typename X, class ord = DegLexOrd<X>>
+Poly<K, X, ord> replace(const Poly<K, X, ord>& p, const std::vector<Poly<K, X, ord>>& news) {
+  Poly<K, X, ord> res;
   for (const auto& [m, c] : p.terms) {
     res += replace(m, news) * c;
   }

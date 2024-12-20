@@ -6,9 +6,6 @@
 using namespace std;
 using namespace ncgb;
 
-typedef Poly<mpq_class> P;
-typedef Monomial::X X;
-
 void test_is_reduced() {
   P f = random_poly();
   size_t n = rand() % 5 + 1;
@@ -59,9 +56,9 @@ void testReconstructSet() {
     }
   }
 
-  vector<InIdealPoly<mpq_class>> G_rec(n);
+  vector<InIdealPoly<mpq_class, X>> G_rec(n);
   for (size_t i = 0; i < n; i++) {
-    G_rec[i].terms.push_back({Monomial(), i, Monomial(), mpq_class(1)});
+    G_rec[i].terms.push_back({Monomial<X>(), i, Monomial<X>(), mpq_class(1)});
   }
 
   P f_copy = f;

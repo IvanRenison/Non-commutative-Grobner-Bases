@@ -7,8 +7,8 @@
 namespace ncgb {
 
 /* Reduce inplace with one polynomial, return true iff the polynomial was reduced */
-template<typename K, class ord = DegLexOrd>
-bool reduce(Poly<K, ord>& f, const Poly<K, ord>& g) {
+template<typename K, typename X, class ord = DegLexOrd<X>>
+bool reduce(Poly<K, X, ord>& f, const Poly<K, X, ord>& g) {
   if (f.isZero()) {
     return false;
   }
@@ -16,7 +16,7 @@ bool reduce(Poly<K, ord>& f, const Poly<K, ord>& g) {
     return false;
   }
 
-  const Monomial& gm = g.lm();
+  const Monomial<X>& gm = g.lm();
   K gc = g.lc();
 
   for (auto& [fm, fc] : std::views::reverse(f.terms)) {
@@ -32,8 +32,8 @@ bool reduce(Poly<K, ord>& f, const Poly<K, ord>& g) {
 }
 
 /* Reduce in place with a std::vector of polynomials, but only with the nor marked */
-template<typename K, class ord = DegLexOrd>
-void reduce(Poly<K, ord>& f, const std::vector<Poly<K, ord>>& G, const std::vector<bool> marks) {
+template<typename K, typename X, class ord = DegLexOrd<X>>
+void reduce(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G, const std::vector<bool> marks) {
   while (true) {
     bool red = false;
     for (size_t i = 0; i < G.size(); i++) if (!marks[i]) {
@@ -50,15 +50,15 @@ void reduce(Poly<K, ord>& f, const std::vector<Poly<K, ord>>& G, const std::vect
 }
 
 /* Reduce in place with a std::vector of polynomials, return true iff the polynomial was reduced */
-template<typename K, class ord = DegLexOrd>
-void reduce(Poly<K, ord>& f, const std::vector<Poly<K, ord>>& G) {
+template<typename K, typename X, class ord = DegLexOrd<X>>
+void reduce(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G) {
   std::vector<bool> marks(G.size(), false);
   reduce(f, G, marks);
 }
 
 /* Reduces several polynomials with each other */
-template<typename K, class ord = DegLexOrd>
-void interReduce(std::vector<Poly<K, ord>>& G) {
+template<typename K, typename X, class ord = DegLexOrd<X>>
+void interReduce(std::vector<Poly<K, X, ord>>& G) {
   size_t n = G.size();
   sort(G.begin(), G.end(), PolyOrd<K, ord>());
 
@@ -73,12 +73,12 @@ void interReduce(std::vector<Poly<K, ord>>& G) {
   }
 
   // Erase all zero polynomials
-  G.erase(remove(G.begin(), G.end(), Poly<K, ord>()), G.end());
+  G.erase(remove(G.begin(), G.end(), Poly<K, X, ord>()), G.end());
 }
 
 /* Reduce inplace with one polynomial, return how the reduction was made (or null if no reduction was made)*/
-template<typename K, class ord = DegLexOrd>
-std::optional<std::tuple<Monomial, Monomial, K>> reduceReconstruct(Poly<K, ord>& f, const Poly<K, ord>& g) {
+template<typename K, typename X, class ord = DegLexOrd<X>>
+std::optional<std::tuple<Monomial<X>, Monomial<X>, K>> reduceReconstruct(Poly<K, X, ord>& f, const Poly<K, X, ord>& g) {
   if (f.isZero()) {
     return {};
   }
@@ -86,7 +86,7 @@ std::optional<std::tuple<Monomial, Monomial, K>> reduceReconstruct(Poly<K, ord>&
     return {};
   }
 
-  const Monomial& gm = g.lm();
+  const Monomial<X>& gm = g.lm();
   K gc = g.lc();
 
   for (auto& [fm, fc] : std::views::reverse(f.terms)) {
@@ -103,10 +103,10 @@ std::optional<std::tuple<Monomial, Monomial, K>> reduceReconstruct(Poly<K, ord>&
 }
 
 /* Reduce in place with a std::vector of polynomials, but only with the nor marked, returning how the reduction was made */
-template<typename K, class ord = DegLexOrd>
-InIdealPoly<K, ord>
-reduceReconstruct(Poly<K, ord>& f, const std::vector<Poly<K, ord>>& G, const std::vector<InIdealPoly<K, ord>>& G_rec, const std::vector<bool> marks) {
-  InIdealPoly<K, ord> res;
+template<typename K, typename X, class ord = DegLexOrd<X>>
+InIdealPoly<K, X, ord>
+reduceReconstruct(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G, const std::vector<InIdealPoly<K, X, ord>>& G_rec, const std::vector<bool> marks) {
+  InIdealPoly<K, X, ord> res;
   while (true) {
     bool red = false;
     for (size_t i = 0; i < G.size(); i++) if (!marks[i]) {
@@ -128,9 +128,9 @@ reduceReconstruct(Poly<K, ord>& f, const std::vector<Poly<K, ord>>& G, const std
 }
 
 /* Reduce in place with a std::vector of polynomials returning how the reduction was made */
-template<typename K, class ord = DegLexOrd>
-InIdealPoly<K, ord>
-reduceReconstruct(Poly<K, ord>& f, const std::vector<Poly<K, ord>>& G, const std::vector<InIdealPoly<K, ord>>& g_rec) {
+template<typename K, typename X, class ord = DegLexOrd<X>>
+InIdealPoly<K, X, ord>
+reduceReconstruct(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G, const std::vector<InIdealPoly<K, X, ord>>& g_rec) {
   std::vector<bool> marks(G.size(), false);
   return reduceReconstruct(f, G, g_rec, marks);
 }

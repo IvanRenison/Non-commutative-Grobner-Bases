@@ -29,11 +29,11 @@ int main() {
 
   assert(n - 1 < tris.size());
 
-  vector<Poly<int>> polys;
+  vector<Poly<int, __uint64_t>> polys;
   for (string s : tris[n - 1]) {
     stringstream ss("1 " + s + " - 1");
-    Poly<int> p;
-    p = Poly<int>::nice_read(ss);
+    Poly<int, __uint64_t> p;
+    p = Poly<int, __uint64_t>::nice_read(ss);
     polys.push_back(p);
   }
 

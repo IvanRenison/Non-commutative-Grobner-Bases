@@ -6,9 +6,7 @@
 using namespace std;
 using namespace ncgb;
 
-typedef Monomial::X X;
-
-vector<size_t> slow_divide_indexes(const Monomial& m0, const Monomial& m1) {
+vector<size_t> slow_divide_indexes(const Monomial<X>& m0, const Monomial<X>& m1) {
   size_t n = m0.size(), m = m1.size();
 
   vector<size_t> ans;
@@ -29,7 +27,7 @@ vector<size_t> slow_divide_indexes(const Monomial& m0, const Monomial& m1) {
   return ans;
 }
 
-bool slow_divides(const Monomial& m0, const Monomial& m1) {
+bool slow_divides(const Monomial<X>& m0, const Monomial<X>& m1) {
   if (m0.vals.size() > m1.vals.size()) return false;
   for (size_t i = 0; i + m0.vals.size() <= m1.vals.size(); i++) {
     bool ok = true;
@@ -44,12 +42,12 @@ bool slow_divides(const Monomial& m0, const Monomial& m1) {
   return false;
 }
 
-vector<pair<Monomial, Monomial>> slow_divide(const Monomial& m0, const Monomial& m1) {
+vector<pair<Monomial<X>, Monomial<X>>> slow_divide(const Monomial<X>& m0, const Monomial<X>& m1) {
   vector<size_t> is = slow_divide_indexes(m0, m1);
-  vector<pair<Monomial, Monomial>> ans;
+  vector<pair<Monomial<X>, Monomial<X>>> ans;
   for (size_t i : is) {
-    Monomial a(vector(m1.vals.begin(), m1.vals.begin() + i));
-    Monomial b(vector(m1.vals.begin() + i + m0.size(), m1.vals.end()));
+    Monomial<X> a(vector(m1.vals.begin(), m1.vals.begin() + i));
+    Monomial<X> b(vector(m1.vals.begin() + i + m0.size(), m1.vals.end()));
     ans.push_back({a, b});
   }
   return ans;
@@ -57,14 +55,14 @@ vector<pair<Monomial, Monomial>> slow_divide(const Monomial& m0, const Monomial&
 
 void test_prod_and_divide() {
 
-  Monomial m0 = random_monomial(), m1 = random_monomial(), m2 = random_monomial();
+  Monomial<X> m0 = random_monomial(), m1 = random_monomial(), m2 = random_monomial();
 
-  Monomial prod = m0 * m1;
+  Monomial<X> prod = m0 * m1;
 
   assert(m0.divides(prod));
   assert(m1.divides(prod));
 
-  Monomial m00 = m0;
+  Monomial<X> m00 = m0;
   m00 *= m1;
 
   assert(prod == m00);
@@ -78,14 +76,14 @@ void test_prod_and_divide() {
 
   assert(prod == m00);
 
-  vector<pair<Monomial, Monomial>> divs = m1.divide(prod);
+  vector<pair<Monomial<X>, Monomial<X>>> divs = m1.divide(prod);
   assert(!divs.empty());
-  vector<pair<Monomial, Monomial>> slow_divs = slow_divide(m1, prod);
+  vector<pair<Monomial<X>, Monomial<X>>> slow_divs = slow_divide(m1, prod);
   assert(divs == slow_divs);
 }
 
 void test_divide() {
-  Monomial m0 = random_monomial(), m1 = random_monomial();
+  Monomial<X> m0 = random_monomial(), m1 = random_monomial();
 
   bool div = slow_divides(m0, m1);
   assert(div == m0.divides(m1));
@@ -95,19 +93,19 @@ void test_divide() {
 
   assert(is == slow_is);
 
-  vector<pair<Monomial, Monomial>> divs = m0.divide(m1);
-  vector<pair<Monomial, Monomial>> slow_divs = slow_divide(m0, m1);
+  vector<pair<Monomial<X>, Monomial<X>>> divs = m0.divide(m1);
+  vector<pair<Monomial<X>, Monomial<X>>> slow_divs = slow_divide(m0, m1);
 
   assert(divs == slow_divs);
 
   for (auto [a, b] : divs) {
-    Monomial m = a * m0 * b;
+    Monomial<X> m = a * m0 * b;
     assert(m == m1);
   }
 }
 
 void test_eq() {
-  Monomial m = random_monomial();
+  Monomial<X> m = random_monomial();
 
   vector<size_t> divs = m.divide_indexes(m);
   assert(divs.size() == 1);
@@ -115,14 +113,14 @@ void test_eq() {
 }
 
 void test_IO() {
-  Monomial m0 = random_monomial();
+  Monomial<X> m0 = random_monomial();
 
   string s;
 
   stringstream ss;
   ss << m0;
 
-  Monomial m1;
+  Monomial<X> m1;
   ss >> m1;
 
   assert(m0 == m1);

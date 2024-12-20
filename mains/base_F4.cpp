@@ -22,7 +22,7 @@ int main() {
     cin >> G[i];
   }
 
-  F4Incremental<R> F4(G);
+  F4Incremental F4(G);
 
   vector<P> base = F4.fullBase();
 

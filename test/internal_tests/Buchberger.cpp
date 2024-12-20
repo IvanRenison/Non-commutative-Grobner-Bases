@@ -6,8 +6,6 @@
 using namespace std;
 using namespace ncgb;
 
-typedef Poly<mpq_class> P;
-
 void testS_poly() {
   P f = random_poly();
   while (f.isZero()) {

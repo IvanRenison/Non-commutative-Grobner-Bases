@@ -22,7 +22,7 @@ int main() {
     cin >> G[i];
   }
 
-  BuchbergerIncremental<R> bi(G);
+  BuchbergerIncremental bi(G);
 
   vector<P> base = bi.fullBase();
 

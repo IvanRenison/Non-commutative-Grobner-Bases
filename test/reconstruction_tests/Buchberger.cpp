@@ -25,14 +25,14 @@ int main() {
 
   // Messure time
   auto start = chrono::high_resolution_clock::now();
-  BuchbergerIncremental<R> bi(G);
+  BuchbergerIncremental bi(G);
   vector<P> base = bi.fullBase();
   auto end = chrono::high_resolution_clock::now();
 
   cerr << "Normal time: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
 
   start = chrono::high_resolution_clock::now();
-  BuchbergerIncrementalReconstruct<R> bir(G);
+  BuchbergerIncrementalReconstruct bir(G);
   vector<InIdealPoly<R>> in_ideal_base = bir.fullBase();
   end = chrono::high_resolution_clock::now();
   cerr << "Reconstruction time: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;

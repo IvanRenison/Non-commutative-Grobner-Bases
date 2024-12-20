@@ -7,12 +7,9 @@
 using namespace std;
 using namespace ncgb;
 
-typedef Poly<mpq_class> P;
-typedef Monomial::X X;
-
 void test_operations() {
   P p = random_poly(), q = random_poly(), r = random_poly();
-  Monomial m = random_monomial();
+  Monomial<X> m = random_monomial();
   mpq_class c0 = random_rational(), c1 = random_rational();
   assert(p + q == q + p);
   assert(p + (q + r) == (p + q) + r);
@@ -42,7 +39,7 @@ void test_replace() {
   P p = random_poly(x_max);
   vector<P> ids(x_max);
   for (size_t i = 0; i < x_max; i++) {
-    ids[i] = P(Monomial({(X)i}));
+    ids[i] = P(Monomial<X>({(X)i}));
   }
 
   P q = replace(p, ids);

@@ -22,9 +22,11 @@ Where c_i are element of the field, and x_{i, j} are the variables, represented 
 
 ## Generic code
 
-Most of the code if generic taking two argument, the field `K` and a monomial ordering `ord` witch is set by default to `DegLexOrd`.
+Most of the code if generic taking three arguments, the field `K`, the numbers used for the variables `X` and a monomial ordering `ord` witch is set by default to `DegLexOrd<X>`.
 
 The field `K` must have all field operations defined, including constructors that work with `0` and `1`.
+
+For `X` is recommend to use an unsigned integer like `__uint8_t` but it may also work with other types.
 
 ## Compiling
 

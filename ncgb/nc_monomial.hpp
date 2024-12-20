@@ -6,9 +6,8 @@
 namespace ncgb {
 
 /* Struct for representing non commutative monomials */
+template<typename X = __uint8_t>
 struct Monomial {
-  typedef __uint8_t X;
-
   std::vector<X> vals;
 
   Monomial() {}
@@ -145,16 +144,18 @@ struct Monomial {
   }
 };
 
+template<typename X>
 struct DegLexOrd {
-  bool operator()(const Monomial& a, const Monomial& b) const {
+  bool operator()(const Monomial<X>& a, const Monomial<X>& b) const {
     size_t n = a.vals.size(), m = b.vals.size();
     return n < m || (n == m && a.vals < b.vals);
   }
 };
 
 /* For each x in m replace x by news[x] */
-Monomial replace(const Monomial& m, const std::vector<Monomial>& news) {
-  Monomial res;
+template<typename X>
+Monomial<X> replace(const Monomial<X>& m, const std::vector<Monomial<X>>& news) {
+  Monomial<X> res;
   for (auto x : m.vals) {
     res *= news[x];
   }

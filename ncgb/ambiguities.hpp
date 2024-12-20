@@ -4,12 +4,13 @@
 #include "nc_polynomial.hpp"
 namespace ncgb {
 
+template<typename X>
 struct Amb {
-  const Monomial& p, q;
+  const Monomial<X>& p, q;
   enum Type { Inclusion, Overlap };
   Type type;
   size_t pos; // position where q starts in p
-  Monomial a, b;
+  Monomial<X> a, b;
 
   size_t size() const {
     if (type == Inclusion) {
@@ -19,7 +20,7 @@ struct Amb {
     }
   }
 
-  Monomial lm() const {
+  Monomial<X> lm() const {
     if (type == Inclusion) {
       return p;
     } else {
@@ -28,21 +29,22 @@ struct Amb {
   }
 };
 
-std::vector<Amb>
-ambiguities(const Monomial& p, const Monomial& q) {
-  std::vector<Amb> res;
+template<typename X>
+std::vector<Amb<X>>
+ambiguities(const Monomial<X>& p, const Monomial<X>& q) {
+  std::vector<Amb<X>> res;
 
   size_t n = p.size(), m = q.size();
 
   // Inclusion of q inside p
   std::vector<size_t> div_idxs = q.divide_indexes(p);
   for (size_t i : div_idxs) {
-    Amb amb = {
+    Amb<X> amb = {
       p, q,
-      Amb::Inclusion,
+      Amb<X>::Inclusion,
       i,
-      Monomial(std::vector(p.vals.begin(), p.vals.begin() + i)),
-      Monomial(std::vector(p.vals.begin() + i + q.size(), p.vals.end()))
+      Monomial<X>(std::vector(p.vals.begin(), p.vals.begin() + i)),
+      Monomial<X>(std::vector(p.vals.begin() + i + q.size(), p.vals.end()))
     };
     res.push_back(std::move(amb));
   }
@@ -57,12 +59,12 @@ ambiguities(const Monomial& p, const Monomial& q) {
 
     if (!valid) continue;
 
-    Amb amb = {
+    Amb<X> amb = {
       p, q,
-      Amb::Overlap,
+      Amb<X>::Overlap,
       i,
-      Monomial(std::vector(p.vals.begin(), p.vals.begin() + i)),
-      Monomial(std::vector(q.vals.begin() + (n - i), q.vals.end()))
+      Monomial<X>(std::vector(p.vals.begin(), p.vals.begin() + i)),
+      Monomial<X>(std::vector(q.vals.begin() + (n - i), q.vals.end()))
     };
 
     res.push_back(std::move(amb));
@@ -71,9 +73,9 @@ ambiguities(const Monomial& p, const Monomial& q) {
   return res;
 }
 
-template<typename K, class ord = DegLexOrd>
-Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g) {
-  if (amb.type == Amb::Inclusion) {
+template<typename K, typename X, class ord = DegLexOrd<X>>
+Poly<K, X, ord> S_poly(const Amb<X>& amb, const Poly<K, X, ord>& f, const Poly<K, X, ord>& g) {
+  if (amb.type == Amb<X>::Inclusion) {
     return f / f.lc() - (amb.a * g * amb.b) / g.lc();
   } else {
     return (f * amb.b) / f.lc() - (amb.a * g) / g.lc();
@@ -82,15 +84,17 @@ Poly<K, ord> S_poly(const Amb& amb, const Poly<K, ord>& f, const Poly<K, ord>& g
 
 /* Check if amb with o satisfy the general deletion criteria (Corollary 4.35 of Hof20). Pay attention polynomial indexes also.
 Returns true if amb does not have to be added */
-bool checkGeneralDeletionCriteria(const Amb& amb, const Monomial& o) {
+template<typename X>
+bool checkGeneralDeletionCriteria(const Amb<X>& amb, const Monomial<X>& o) {
   return o.divides(amb.lm());
 }
 
 /* Check if amb with o satisfy the specifics deletion criteria (Corollary 4.36 and 4.47 of Hof20). Pay attention polynomial indexes also.
 Returns true if amb does not have to be added */
-bool checkSpecificsDeletionCriteria(const Amb& amb, const Monomial& o) {
+template<typename X>
+bool checkSpecificsDeletionCriteria(const Amb<X>& amb, const Monomial<X>& o) {
   if (!checkGeneralDeletionCriteria(amb, o)) return false;
-  if (amb.type == Amb::Inclusion) {
+  if (amb.type == Amb<X>::Inclusion) {
     if (o.divides(amb.a) || o.divides(amb.b)) {
       return true;
     }
@@ -102,12 +106,12 @@ bool checkSpecificsDeletionCriteria(const Amb& amb, const Monomial& o) {
     }
   } else {
     if (o.divides(amb.a) && o.divides(amb.b)) {
-      Monomial m(std::vector(amb.p.vals.begin() + amb.pos, amb.p.vals.end()));
+      Monomial<X> m(std::vector<X>(amb.p.vals.begin() + amb.pos, amb.p.vals.end()));
       if (o.divides(m)){
         return true;
       }
     }
-    std::vector<std::pair<Monomial, Monomial>> divs = o.divide(amb.lm());
+    std::vector<std::pair<Monomial<X>, Monomial<X>>> divs = o.divide(amb.lm());
     for (auto& [L, R] : divs) {
       if (L.empty() && R.size() < amb.b.size()){
         return true;
@@ -124,9 +128,9 @@ bool checkSpecificsDeletionCriteria(const Amb& amb, const Monomial& o) {
 }
 
 /* Returns true if amb does not have to be added */
-template<typename K, class ord = DegLexOrd>
-bool checkDeletionCriteria(std::vector<Poly<K, ord>>& G, Amb& amb, size_t i, size_t j) {
-  if (i == j && amb.type == Amb::Inclusion) {
+template<typename K, typename X, class ord = DegLexOrd<X>>
+bool checkDeletionCriteria(std::vector<Poly<K, X, ord>>& G, Amb<X>& amb, size_t i, size_t j) {
+  if (i == j && amb.type == Amb<X>::Inclusion) {
     return true;
   }
   size_t k = 0;
@@ -140,7 +144,7 @@ bool checkDeletionCriteria(std::vector<Poly<K, ord>>& G, Amb& amb, size_t i, siz
       return true;
     }
   }
-  if (amb.type == Amb::Overlap) {
+  if (amb.type == Amb<X>::Overlap) {
     for (; k < G.size(); k++) {
       if (checkSpecificsDeletionCriteria(amb, G[k].lm())) {
         return true;
