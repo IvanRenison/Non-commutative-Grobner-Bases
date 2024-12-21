@@ -6,7 +6,7 @@
 namespace ncgb {
 
 /* Check if two Gröbner bases generate the same ideal */
-template<typename K, typename X, class ord = DegLexOrd<X>>
+template<typename K, typename X, class ord>
 bool cmpBases(const std::vector<Poly<K, X, ord>>& G0, const std::vector<Poly<K, X, ord>>& G1) {
   for (auto f : G0) {
     reduce(f, G1);

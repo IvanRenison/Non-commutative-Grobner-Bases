@@ -306,7 +306,7 @@ struct Poly {
   }
 };
 
-template<typename K, typename X, class ord = DegLexOrd<X>>
+template<typename K, typename X, class ord>
 Poly<K, X, ord> operator*(Monomial<X> m, const Poly<K, X, ord>& p) {
   Poly<K, X, ord> res = p;
   for (auto& [m_, d] : res.terms) {
@@ -315,7 +315,7 @@ Poly<K, X, ord> operator*(Monomial<X> m, const Poly<K, X, ord>& p) {
   return res;
 }
 
-template<typename K, typename X, class ord = DegLexOrd<X>>
+template<typename K, typename X, class ord>
 struct PolyOrd {
   bool operator()(const Poly<K, X, ord>& p1, const Poly<K, X, ord>& p2) const {
     for (auto it1 = p1.terms.rbegin(), it2 = p2.terms.rbegin();
@@ -331,7 +331,7 @@ struct PolyOrd {
 };
 
 /* For each x in the monomials of p replace x by news[x] */
-template<typename K, typename X, class ord = DegLexOrd<X>>
+template<typename K, typename X, class ord>
 Poly<K, X, ord> replace(const Monomial<X>& m, const std::vector<Poly<K, X, ord>>& news) {
   Poly<K, X, ord> res(Monomial<X>(), K(1));
   for (auto x : m.vals) {
@@ -341,7 +341,7 @@ Poly<K, X, ord> replace(const Monomial<X>& m, const std::vector<Poly<K, X, ord>>
 }
 
 /* For each x in the monomials of p replace x by news[x] */
-template<typename K, typename X, class ord = DegLexOrd<X>>
+template<typename K, typename X, class ord>
 Poly<K, X, ord> replace(const Poly<K, X, ord>& p, const std::vector<Poly<K, X, ord>>& news) {
   Poly<K, X, ord> res;
   for (const auto& [m, c] : p.terms) {

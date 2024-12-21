@@ -73,7 +73,7 @@ ambiguities(const Monomial<X>& p, const Monomial<X>& q) {
   return res;
 }
 
-template<typename K, typename X, class ord = DegLexOrd<X>>
+template<typename K, typename X, class ord>
 Poly<K, X, ord> S_poly(const Amb<X>& amb, const Poly<K, X, ord>& f, const Poly<K, X, ord>& g) {
   if (amb.type == Amb<X>::Inclusion) {
     return f / f.lc() - (amb.a * g * amb.b) / g.lc();
@@ -128,7 +128,7 @@ bool checkSpecificsDeletionCriteria(const Amb<X>& amb, const Monomial<X>& o) {
 }
 
 /* Returns true if amb does not have to be added */
-template<typename K, typename X, class ord = DegLexOrd<X>>
+template<typename K, typename X, class ord>
 bool checkDeletionCriteria(std::vector<Poly<K, X, ord>>& G, Amb<X>& amb, size_t i, size_t j) {
   if (i == j && amb.type == Amb<X>::Inclusion) {
     return true;

@@ -97,7 +97,7 @@ struct InIdealPoly {
   }
 };
 
-template<typename K, typename X, class ord = DegLexOrd<X>>
+template<typename K, typename X, class ord>
 InIdealPoly<K, X, ord> operator*(const Monomial<X>& m, const InIdealPoly<K, X, ord>& p) {
   InIdealPoly<K, X, ord> res;
     for (auto& [m0, i, m1, c] : p.terms) {
