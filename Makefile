@@ -48,7 +48,7 @@ reconstruction_tests: $(RECONSTRUCTION_TESTS_RUN_FILES) commonTestCases
 parallelism_tests: $(PARALLELISM_TESTS_RUN_FILES) build_mains commonTestCases
 	cd test/parallelism_tests && python3 run.py
 
-test: internal_tests reconstruction_tests base_tests InIdeal_tests
+test: internal_tests reconstruction_tests base_tests InIdeal_tests parallelism_tests
 
 clean:
 	rm -f *.run
