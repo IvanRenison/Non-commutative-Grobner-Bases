@@ -45,8 +45,8 @@ int main() {
   }
   for (size_t i = 0; i < n; i++) {
     for (size_t j = 0; j < i; j++) {
-      for (size_t k = 0; k < j; k++) {
-        for (size_t l = 0; l < k; l++) {
+      for (size_t k = 0; k < i; k++) if (k != j) {
+        for (size_t l = 0; l < k; l++) if (l != j) {
           ss << "2\n";
           ss << "1 2 " << vars[i][j] << ' ' << vars[k][l] << '\n';
           ss << "1 2 " << vars[k][l] << ' ' << vars[i][j] << '\n';
