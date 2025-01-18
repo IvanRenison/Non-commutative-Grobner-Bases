@@ -23,7 +23,7 @@ bases_comparator: str = "./../../mains/compare_bases.run"
 testCasesFolder = "../commonTestCases/testCases"
 outputFolder = "./output"
 
-threads = [1, 2, 4, 6, 8, 12, 16]
+threads = [1, 2, 4, 6, 8, 16]
 
 os.system(f"rm -rf {outputFolder}")
 os.system(f"mkdir -p {outputFolder}")

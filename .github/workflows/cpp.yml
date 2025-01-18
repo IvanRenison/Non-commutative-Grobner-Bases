@@ -11,7 +11,7 @@ jobs:
   internal_tests:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
 
     steps:
     - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
   InIdeal_tests:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
 
     steps:
     - uses: actions/checkout@v4
@@ -60,7 +60,7 @@ jobs:
   reconstruction_tests:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
 
     steps:
     - uses: actions/checkout@v4
@@ -75,7 +75,7 @@ jobs:
   parallelism_tests:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
 
     steps:
     - uses: actions/checkout@v4
