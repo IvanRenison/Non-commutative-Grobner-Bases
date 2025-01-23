@@ -19,7 +19,7 @@ void testS_poly() {
 
   for (auto amb : ambs) {
     P s = S_poly(amb, f, g);
-    auto [s_rec, f_rec, g_rec] = S_polyReconstruct(amb, f, g);
+    auto [s_rec, f_rec, g_rec] = S_polyCofactor(amb, f, g);
 
     if (s != s_rec) {
       f.nice_print(cerr);
@@ -45,7 +45,7 @@ void testInIdeal() {
   }
 
   P f_copy = f;
-  auto [st, rec] = inIdealReconstruct(G, f, 20);
+  auto [st, rec] = inIdealCofactor(G, f, 20);
 
   if (st == InIdeal) {
     P f2 = rec->construct(G);

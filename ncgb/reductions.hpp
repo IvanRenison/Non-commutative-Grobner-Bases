@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 
 #include "nc_polynomial.hpp"
-#include "nc_polyonomial_inIdeal.hpp"
+#include "nc_cofactorPolynomial.hpp"
 
 namespace ncgb {
 
@@ -78,7 +78,7 @@ void interReduce(std::vector<Poly<K, X, ord>>& G) {
 
 /* Reduce inplace with one polynomial, return how the reduction was made (or null if no reduction was made)*/
 template<typename K, typename X, class ord>
-std::optional<std::tuple<Monomial<X>, Monomial<X>, K>> reduceReconstruct(Poly<K, X, ord>& f, const Poly<K, X, ord>& g) {
+std::optional<std::tuple<Monomial<X>, Monomial<X>, K>> reduceCofactor(Poly<K, X, ord>& f, const Poly<K, X, ord>& g) {
   if (f.isZero()) {
     return {};
   }
@@ -104,13 +104,13 @@ std::optional<std::tuple<Monomial<X>, Monomial<X>, K>> reduceReconstruct(Poly<K,
 
 /* Reduce in place with a std::vector of polynomials, but only with the nor marked, returning how the reduction was made */
 template<typename K, typename X, class ord>
-InIdealPoly<K, X, ord>
-reduceReconstruct(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G, const std::vector<InIdealPoly<K, X, ord>>& G_rec, const std::vector<bool> marks) {
-  InIdealPoly<K, X, ord> res;
+CofactorPoly<K, X, ord>
+reduceCofactor(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G, const std::vector<CofactorPoly<K, X, ord>>& G_rec, const std::vector<bool> marks) {
+  CofactorPoly<K, X, ord> res;
   while (true) {
     bool red = false;
     for (size_t i = 0; i < G.size(); i++) if (!marks[i]) {
-      auto red_now = reduceReconstruct(f, G[i]);
+      auto red_now = reduceCofactor(f, G[i]);
       if (red_now.has_value()) {
         auto& [a, b, c] = *red_now;
         for (const auto& [a_, i_, b_, c_] : G_rec[i].terms) {
@@ -129,10 +129,10 @@ reduceReconstruct(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G, con
 
 /* Reduce in place with a std::vector of polynomials returning how the reduction was made */
 template<typename K, typename X, class ord>
-InIdealPoly<K, X, ord>
-reduceReconstruct(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G, const std::vector<InIdealPoly<K, X, ord>>& g_rec) {
+CofactorPoly<K, X, ord>
+reduceCofactor(Poly<K, X, ord>& f, const std::vector<Poly<K, X, ord>>& G, const std::vector<CofactorPoly<K, X, ord>>& g_rec) {
   std::vector<bool> marks(G.size(), false);
-  return reduceReconstruct(f, G, g_rec, marks);
+  return reduceCofactor(f, G, g_rec, marks);
 }
 
 } // namespace ncgb

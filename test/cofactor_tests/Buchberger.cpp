@@ -12,7 +12,7 @@ typedef Poly<R> P;
 
 /*
 Assuming the generator set given by input has a finite base, tests that
-the reconstruction is valid
+the cofactor representation is valid
 */
 int main() {
 
@@ -32,22 +32,22 @@ int main() {
   cerr << "Normal time: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
 
   start = chrono::high_resolution_clock::now();
-  BuchbergerIncrementalReconstruct bir(G);
-  vector<InIdealPoly<R>> in_ideal_base = bir.fullBase();
+  BuchbergerIncrementalCofactor bir(G);
+  vector<CofactorPoly<R>> in_ideal_base = bir.fullBase();
   end = chrono::high_resolution_clock::now();
-  cerr << "Reconstruction time: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
+  cerr << "Cofactor time: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
   vector<P> baser;
   for (auto& p : in_ideal_base) {
     baser.push_back(p.construct(G));
   }
 
   if (base != baser) {
-    cerr << "Base reconstruction failed" << endl;
+    cerr << "Base cofactor failed" << endl;
     cerr << "Normal base:" << endl;
     for (auto& p : base) {
       p.nice_print(cerr);
     }
-    cerr << "Reconstructed base:" << endl;
+    cerr << "Cofactor base:" << endl;
     for (auto& p : baser) {
       p.nice_print(cerr);
     }

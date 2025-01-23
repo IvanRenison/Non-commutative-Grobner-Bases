@@ -57,7 +57,7 @@ jobs:
       run:
         make base_tests
 
-  reconstruction_tests:
+  cofactor_tests:
 
     runs-on: ubuntu-latest
     timeout-minutes: 40
@@ -70,7 +70,7 @@ jobs:
         sudo apt-get install libgivaro-dev libflint-dev
     - name: Run test
       run:
-        make reconstruction_tests
+        make cofactor_tests
 
   parallelism_tests:
 

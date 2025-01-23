@@ -15,8 +15,8 @@ INTERNAL_TEST_FILES := $(wildcard test/internal_tests/*.cpp)
 INTERNAL_TEST_RUN_FILES := $(patsubst %.cpp, %.run, $(INTERNAL_TEST_FILES))
 BASE_TESTS_FILES := $(wildcard test/base_tests/*.cpp)
 BASE_TESTS_RUN_FILES := $(patsubst %.cpp, %.run, $(BASE_TESTS_FILES))
-RECONSTRUCTION_TESTS_FILES := $(wildcard test/reconstruction_tests/*.cpp)
-RECONSTRUCTION_TESTS_RUN_FILES := $(patsubst %.cpp, %.run, $(RECONSTRUCTION_TESTS_FILES))
+COFACTOR_TESTS_FILES := $(wildcard test/cofactor_tests/*.cpp)
+COFACTOR_TESTS_RUN_FILES := $(patsubst %.cpp, %.run, $(COFACTOR_TESTS_FILES))
 PARALLELISM_TESTS_FILES := $(wildcard test/parallelism_tests/*.cpp)
 PARALLELISM_TESTS_RUN_FILES := $(patsubst %.cpp, %.run, $(PARALLELISM_TESTS_FILES))
 
@@ -42,13 +42,13 @@ base_tests: $(BASE_TESTS_RUN_FILES) build_mains commonTestCases
 InIdeal_tests: $(TEST_INIDEAL_RUN_FILES) build_mains
 	cd test/InIdeal_tests && python3 run.py
 
-reconstruction_tests: $(RECONSTRUCTION_TESTS_RUN_FILES) commonTestCases
-	cd test/reconstruction_tests && python3 run.py
+cofactor_tests: $(COFACTOR_TESTS_RUN_FILES) commonTestCases
+	cd test/cofactor_tests && python3 run.py
 
 parallelism_tests: $(PARALLELISM_TESTS_RUN_FILES) build_mains commonTestCases
 	cd test/parallelism_tests && python3 run.py
 
-test: internal_tests reconstruction_tests base_tests InIdeal_tests parallelism_tests
+test: internal_tests cofactor_tests base_tests InIdeal_tests parallelism_tests
 
 clean:
 	rm -f *.run
@@ -61,4 +61,4 @@ clean:
 	rm -f test/InIdeal_tests/*.run
 	rm -rf test/InIdeal_tests/testCases
 	rm -f test/internal_tests/*.run
-	rm -f test/reconstruction_tests/*.run
+	rm -f test/cofactor_tests/*.run

@@ -104,7 +104,7 @@ IdealMembershipStatus inIdeal(const std::vector<Poly<K, X, ord>>& G, Poly<K, X, 
 
 template<typename K, typename X, class ord>
 std::tuple<Poly<K, X, ord>, std::tuple<Monomial<X>, Monomial<X>, K>, std::tuple<Monomial<X>, Monomial<X>, K>>
-S_polyReconstruct(const Amb<X>& amb, const Poly<K, X, ord>& f, const Poly<K, X, ord>& g) {
+S_polyCofactor(const Amb<X>& amb, const Poly<K, X, ord>& f, const Poly<K, X, ord>& g) {
   Monomial<X> fa, fb, ga, gb;
   K fc, gc;
   if (amb.type == Amb<X>::Inclusion) {
@@ -122,18 +122,18 @@ S_polyReconstruct(const Amb<X>& amb, const Poly<K, X, ord>& f, const Poly<K, X, 
 }
 
 // The same that before but getting the construction of the Gröbner base
-// You get InIdealPoly's that are the construction of the polynomials in the Gröbner base
+// You get CofactorPoly's that are the construction of the polynomials in the Gröbner base
 template<typename K, typename X, class ord>
-struct BuchbergerIncrementalReconstruct {
+struct BuchbergerIncrementalCofactor {
   std::vector<Poly<K, X, ord>> G;
-  std::vector<InIdealPoly<K, X, ord>> G_rec;
+  std::vector<CofactorPoly<K, X, ord>> G_rec;
   std::vector<bool> removed;
   std::queue<std::tuple<Amb<X>, size_t, size_t>> ambs;
   size_t t = 0;
 
-  BuchbergerIncrementalReconstruct(std::vector<Poly<K, X, ord>> GG) {
+  BuchbergerIncrementalCofactor(std::vector<Poly<K, X, ord>> GG) {
     for (size_t i = 0; i < GG.size(); i++) {
-      InIdealPoly<K, X, ord> f_rec;
+      CofactorPoly<K, X, ord> f_rec;
       f_rec.terms.push_back({Monomial<X>(), i, Monomial<X>(), K(1)});
       add_poly(GG[i], f_rec);
     }
@@ -147,7 +147,7 @@ struct BuchbergerIncrementalReconstruct {
     ambs.push({std::move(amb), i, j});
   }
 
-  void add_poly(const Poly<K, X, ord>& f, InIdealPoly<K, X, ord>& f_rec) {
+  void add_poly(const Poly<K, X, ord>& f, CofactorPoly<K, X, ord>& f_rec) {
     G.push_back(f);
     G_rec.push_back(std::move(f_rec));
     removed.push_back(false);
@@ -171,8 +171,8 @@ struct BuchbergerIncrementalReconstruct {
       auto [amb, i, j] = std::move(ambs.front());
       ambs.pop();
 
-      auto [s, gi_rec, gj_rec] = S_polyReconstruct(amb, G[i], G[j]);
-      InIdealPoly<K, X, ord> s_rec = reduceReconstruct(s, G, G_rec, removed);
+      auto [s, gi_rec, gj_rec] = S_polyCofactor(amb, G[i], G[j]);
+      CofactorPoly<K, X, ord> s_rec = reduceCofactor(s, G, G_rec, removed);
 
       if (amb.type == Amb<X>::Inclusion) {
         removed[i] = true;
@@ -194,9 +194,9 @@ struct BuchbergerIncrementalReconstruct {
     return {};
   }
 
-  std::vector<InIdealPoly<K, X, ord>> fullBase() {
+  std::vector<CofactorPoly<K, X, ord>> fullBase() {
     while (next().has_value()) {}
-    std::vector<InIdealPoly<K, X, ord>> res;
+    std::vector<CofactorPoly<K, X, ord>> res;
     for (size_t i = 0; i < G.size(); i++) if (!removed[i]) {
       res.push_back(G_rec[i]);
     }
@@ -205,17 +205,17 @@ struct BuchbergerIncrementalReconstruct {
 };
 
 template<typename K, typename X, class ord>
-std::pair<IdealMembershipStatus, std::optional<InIdealPoly<K, X, ord>>>
-inIdealReconstruct(const std::vector<Poly<K, X, ord>>& G, Poly<K, X, ord> f, size_t max_sz = 20) {
-  BuchbergerIncrementalReconstruct<K, X, ord> bi(G);
+std::pair<IdealMembershipStatus, std::optional<CofactorPoly<K, X, ord>>>
+inIdealCofactor(const std::vector<Poly<K, X, ord>>& G, Poly<K, X, ord> f, size_t max_sz = 20) {
+  BuchbergerIncrementalCofactor<K, X, ord> bi(G);
 
-  InIdealPoly<K, X, ord> res;
+  CofactorPoly<K, X, ord> res;
   for (size_t i = G.size(); i < max_sz; i++) {
     std::optional<Poly<K, X, ord>> p = bi.next();
     if (!p.has_value()) {
       return {NotInIdeal, {}};
     }
-    res += reduceReconstruct(f, bi.G, bi.G_rec, bi.removed);
+    res += reduceCofactor(f, bi.G, bi.G_rec, bi.removed);
     if (f.isZero()) {
       return {InIdeal, res};
     }

@@ -25,7 +25,7 @@ void test_is_reduced() {
   }
 }
 
-void testReconstruct_simple() {
+void testCofactor_simple() {
   P f = random_poly();
   P g = random_poly();
   while (g.isZero()) {
@@ -33,7 +33,7 @@ void testReconstruct_simple() {
   }
 
   P f_copy = f;
-  auto red = reduceReconstruct(f, g);
+  auto red = reduceCofactor(f, g);
   if (!red.has_value()) {
     assert(f == f_copy);
   } else {
@@ -46,7 +46,7 @@ void testReconstruct_simple() {
   assert(f == f_copy);
 }
 
-void testReconstructSet() {
+void testCofactorSet() {
   P f = random_poly();
   size_t n = rand() % 5 + 1;
   vector<P> G(n);
@@ -56,13 +56,13 @@ void testReconstructSet() {
     }
   }
 
-  vector<InIdealPoly<mpq_class, X>> G_rec(n);
+  vector<CofactorPoly<mpq_class, X>> G_rec(n);
   for (size_t i = 0; i < n; i++) {
     G_rec[i].terms.push_back({Monomial<X>(), i, Monomial<X>(), mpq_class(1)});
   }
 
   P f_copy = f;
-  auto red = reduceReconstruct(f, G, G_rec);
+  auto red = reduceCofactor(f, G, G_rec);
   for (const P& g : G) {
     for (const auto& [m, c] : f.terms) {
       assert(!g.lm().divides(m));
@@ -84,8 +84,8 @@ void testReconstructSet() {
 int main() {
   for (uint i = 0; i < 1000; i++) {
     test_is_reduced();
-    testReconstruct_simple();
-    testReconstructSet();
+    testCofactor_simple();
+    testCofactorSet();
   }
 
   cout << "Test passed!" << endl;

@@ -12,10 +12,10 @@ If the generator set is G, the polynomial is sum_({m0, i, m1, c} in terms) c * m
 Used for showing how are de element of a Gröbner base constructed from the generator set
 */
 template<typename K, typename X = __uint8_t, class ord = DegLexOrd<X>>
-struct InIdealPoly {
+struct CofactorPoly {
   std::vector<std::tuple<Monomial<X>, size_t, Monomial<X>, K>> terms;
 
-  InIdealPoly() {}
+  CofactorPoly() {}
   void add(Monomial<X>& m0, size_t i, Monomial<X>& m1, K c) {
     if (c != K(0)) {
       terms.push_back({m0, i, m1, c});
@@ -32,25 +32,25 @@ struct InIdealPoly {
     }
   }
 
-  void operator+=(const InIdealPoly& p) {
+  void operator+=(const CofactorPoly& p) {
     terms.insert(terms.end(), p.terms.begin(), p.terms.end());
   }
-  void operator-=(const InIdealPoly& p) {
+  void operator-=(const CofactorPoly& p) {
     for (auto& [m0, i, m1, c] : p.terms) {
       add(m0, i, m1, -c);
     }
   }
 
-  InIdealPoly operator*(const Monomial<X>& m) const {
-    InIdealPoly res;
+  CofactorPoly operator*(const Monomial<X>& m) const {
+    CofactorPoly res;
     for (auto& [m0, i, m1, c] : terms) {
       res.add(m0, i, m1 * m, c);
     }
     return res;
   }
 
-  InIdealPoly operator*(const K& c) const {
-    InIdealPoly res;
+  CofactorPoly operator*(const K& c) const {
+    CofactorPoly res;
     for (auto& [m0, i, m1, c0] : terms) {
       res.add(m0, i, m1, c0 * c);
     }
@@ -98,8 +98,8 @@ struct InIdealPoly {
 };
 
 template<typename K, typename X, class ord>
-InIdealPoly<K, X, ord> operator*(const Monomial<X>& m, const InIdealPoly<K, X, ord>& p) {
-  InIdealPoly<K, X, ord> res;
+CofactorPoly<K, X, ord> operator*(const Monomial<X>& m, const CofactorPoly<K, X, ord>& p) {
+  CofactorPoly<K, X, ord> res;
     for (auto& [m0, i, m1, c] : p.terms) {
       res.add(m * m0, i, m1, c);
     }
