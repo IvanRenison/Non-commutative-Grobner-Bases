@@ -25,7 +25,6 @@ int main() {
   }
 
   P f;
-  P g0;
   cin >> f;
   size_t k;
   cin >> k;
