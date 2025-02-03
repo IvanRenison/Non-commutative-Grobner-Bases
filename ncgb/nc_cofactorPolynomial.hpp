@@ -86,11 +86,14 @@ struct CofactorPoly {
         }
         m0.nice_print(os);
         os << " G[" << i << "] ";
+        m1.nice_print(os);
       } else {
         if (c != K(1)) {
           os << c << ' ';
         }
+        m0.nice_print(os);
         os << " G[" << i << "] ";
+        m1.nice_print(os);
       }
     }
     os << '\n';
