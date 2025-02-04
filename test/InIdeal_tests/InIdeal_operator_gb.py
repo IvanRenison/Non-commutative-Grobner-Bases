@@ -21,6 +21,11 @@ def read_poly():
     poly += monomial
   return poly
 
+def string_to_poly(s: str):
+  poly = sage.Integer(1)
+  for c in s:
+    poly *= names[ord(c) - ord('a')]
+  return poly
 
 def main():
 
@@ -44,6 +49,21 @@ def main():
   if proof == False:
     print("NotInIdeal or Unknown")
   else:
+    sum_poly = names[0] - names[0]
+    for aib in proof:
+      c = aib.c()
+      a = aib.a()
+      i = aib.i()
+      b = aib.b()
+      sum_poly += c * string_to_poly(a) * assumptions[i] * string_to_poly(b)
+
+    # print(f"{assumptions = }")
+    # print(f"{claim = }")
+    # print(f"{proof = }")
+    # print(f"{sum_poly = }")
+
+    assert(sum_poly == claim)
+
     print("InIdeal")
 
 
